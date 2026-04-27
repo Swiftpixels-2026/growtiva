@@ -28,6 +28,7 @@ export const ISSUES: Issue[] = [
     date: "April 2026",
     cover: cover01,
     pages: [cover01, nigeria, kenya, southafrica, morocco, portrait, cover01],
+    pdfUrl: "/issues/issue-01.pdf",
   },
   {
     slug: "issue-00",
@@ -37,6 +38,7 @@ export const ISSUES: Issue[] = [
     date: "January 2026",
     cover: cover00,
     pages: [cover00, portrait, kenya, nigeria, cover00],
+    pdfUrl: "/issues/issue-00.pdf",
   },
 ];
 
