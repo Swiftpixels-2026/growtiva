@@ -59,10 +59,26 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right: Magazine + sliding Africa imagery */}
-          <div className="col-span-12 lg:col-span-6">
-            <div className="relative w-full aspect-[4/5] md:aspect-[5/6] lg:aspect-[4/5] overflow-hidden bg-[#d9c8a8]">
-              {/* Sliding background */}
+          {/* Right: Magazine (top) + sliding Africa imagery (bottom), as separate panels */}
+          <div className="col-span-12 lg:col-span-6 grid grid-cols-1 sm:grid-cols-5 gap-6">
+            {/* Magazine — its own panel */}
+            <div className="sm:col-span-3 relative bg-secondary/60 flex items-center justify-center p-6 md:p-10 aspect-[4/5] overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--accent)/0.12),transparent_70%)]" aria-hidden />
+              <img
+                src={magazine}
+                alt="Growtiva Africa — Issue 01, The Builders Edition magazine cover mockup"
+                className="relative max-h-full w-auto h-full object-contain drop-shadow-[0_40px_60px_rgba(0,0,0,0.45)] animate-fade-up"
+                width={1024}
+                height={1024}
+              />
+              <div className="absolute left-4 top-4 eyebrow text-foreground/60">Issue 01</div>
+              <div className="absolute right-4 bottom-4 text-[11px] tracking-[0.2em] uppercase text-foreground/60">
+                Vol. I · MMXXVI
+              </div>
+            </div>
+
+            {/* Sliding African cities — its own panel */}
+            <div className="sm:col-span-2 relative aspect-[3/5] sm:aspect-auto overflow-hidden bg-foreground/5">
               {slides.map((s, idx) => (
                 <div
                   key={s.src}
@@ -78,30 +94,18 @@ const Hero = () => {
                     width={1024}
                     height={1280}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-foreground/30" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
                 </div>
               ))}
 
-              {/* Magazine mockup floating */}
-              <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
-                <img
-                  src={magazine}
-                  alt="Growtiva Africa — Issue 01, The Builders Edition magazine cover mockup"
-                  className="max-h-full w-auto h-full object-contain drop-shadow-[0_40px_60px_rgba(0,0,0,0.55)] animate-fade-up"
-                  width={1024}
-                  height={1024}
-                />
-              </div>
-
-              {/* Caption */}
-              <div className="absolute left-5 bottom-5 right-5 flex items-end justify-between text-background">
-                <div>
-                  <div className="eyebrow text-background/70">Now featuring</div>
-                  <div className="font-serif text-xl md:text-2xl mt-1">
-                    {slides[i].place}, <span className="italic">{slides[i].country}</span>
-                  </div>
+              <div className="absolute left-4 bottom-4 right-4 text-background">
+                <div className="eyebrow text-background/70">Across Africa</div>
+                <div className="font-serif text-lg md:text-xl mt-1 leading-tight">
+                  {slides[i].place},
+                  <br />
+                  <span className="italic">{slides[i].country}</span>
                 </div>
-                <div className="flex gap-1.5">
+                <div className="mt-4 flex gap-1.5">
                   {slides.map((_, idx) => (
                     <button
                       key={idx}
@@ -114,11 +118,6 @@ const Hero = () => {
                   ))}
                 </div>
               </div>
-            </div>
-
-            <div className="mt-4 flex justify-between text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
-              <span>Vol. I</span>
-              <span>MMXXVI</span>
             </div>
           </div>
         </div>

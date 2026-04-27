@@ -1,13 +1,13 @@
 import cover from "@/assets/issue-01-cover.jpg";
 import { useIssueReader } from "./IssuesProvider";
-import { toast } from "sonner";
+import { ISSUES } from "@/data/content";
+import { downloadIssuePdf } from "@/lib/downloadIssuePdf";
 
 const LatestIssue = () => {
   const { open } = useIssueReader();
+  const issue01 = ISSUES.find((i) => i.slug === "issue-01")!;
 
-  const handleDownload = () => {
-    toast("PDF download is coming with Issue 01's print release. Subscribe to be notified.");
-  };
+  const handleDownload = () => downloadIssuePdf(issue01);
 
   return (
     <section id="latest" className="py-32 md:py-48 border-t border-foreground/10">

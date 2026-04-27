@@ -1,6 +1,6 @@
 import { ISSUES } from "@/data/content";
 import { useIssueReader } from "./IssuesProvider";
-import { toast } from "sonner";
+import { downloadIssuePdf } from "@/lib/downloadIssuePdf";
 
 const AllIssues = () => {
   const { open } = useIssueReader();
@@ -51,9 +51,7 @@ const AllIssues = () => {
                   Read Issue
                 </button>
                 <button
-                  onClick={() =>
-                    toast("PDF download is coming soon. Subscribe to be notified.")
-                  }
+                  onClick={() => downloadIssuePdf(issue)}
                   className="link-underline text-muted-foreground hover:text-foreground"
                 >
                   Download PDF
