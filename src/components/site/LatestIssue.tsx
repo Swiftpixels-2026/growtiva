@@ -1,12 +1,25 @@
 import cover from "@/assets/issue-01-cover.jpg";
+import { useIssueReader } from "./IssuesProvider";
+import { toast } from "sonner";
 
 const LatestIssue = () => {
+  const { open } = useIssueReader();
+
+  const handleDownload = () => {
+    toast("PDF download is coming with Issue 01's print release. Subscribe to be notified.");
+  };
+
   return (
     <section id="latest" className="py-32 md:py-48 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-6 order-2 lg:order-1">
-            <div className="relative">
+            <button
+              type="button"
+              onClick={() => open("issue-01")}
+              className="relative group block w-full text-left"
+              aria-label="Open Issue 01 flipbook"
+            >
               <div
                 className="absolute -inset-6 md:-inset-10 bg-accent/10 -z-10"
                 aria-hidden
@@ -14,12 +27,15 @@ const LatestIssue = () => {
               <img
                 src={cover}
                 alt="Growtiva Africa Issue 01 — The Builders Edition magazine cover"
-                className="w-full h-auto shadow-[0_40px_80px_-20px_rgba(11,11,12,0.25)]"
+                className="w-full h-auto shadow-[0_40px_80px_-20px_rgba(11,11,12,0.25)] transition-transform duration-700 group-hover:scale-[1.02]"
                 loading="lazy"
                 width={1024}
                 height={1280}
               />
-            </div>
+              <span className="absolute bottom-6 left-6 bg-background text-foreground text-[11px] tracking-[0.22em] uppercase px-4 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                Click to read →
+              </span>
+            </button>
           </div>
 
           <div className="col-span-12 lg:col-span-6 order-1 lg:order-2">
@@ -41,18 +57,20 @@ const LatestIssue = () => {
             </p>
 
             <div className="mt-12 flex flex-col sm:flex-row gap-4">
-              <a
-                href="#flipbook"
+              <button
+                type="button"
+                onClick={() => open("issue-01")}
                 className="inline-flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
               >
                 Read Flipbook
-              </a>
-              <a
-                href="#download"
+              </button>
+              <button
+                type="button"
+                onClick={handleDownload}
                 className="inline-flex items-center justify-center gap-3 px-8 py-4 text-[12px] tracking-[0.22em] uppercase border border-foreground hover:bg-foreground hover:text-background transition-colors"
               >
                 Download PDF
-              </a>
+              </button>
             </div>
 
             <dl className="mt-16 grid grid-cols-3 gap-6 max-w-md">

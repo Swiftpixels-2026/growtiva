@@ -1,24 +1,10 @@
-import cover01 from "@/assets/issue-01-cover.jpg";
-import cover00 from "@/assets/issue-00-cover.jpg";
-
-const issues = [
-  {
-    cover: cover01,
-    number: "01",
-    title: "The Builders Edition",
-    blurb: "Founders, creators, and operators building across Africa.",
-    date: "April 2026",
-  },
-  {
-    cover: cover00,
-    number: "00",
-    title: "The Starting Point",
-    blurb: "A look at the mindset and ideas behind a new generation.",
-    date: "January 2026",
-  },
-];
+import { ISSUES } from "@/data/content";
+import { useIssueReader } from "./IssuesProvider";
+import { toast } from "sonner";
 
 const AllIssues = () => {
+  const { open } = useIssueReader();
+
   return (
     <section id="issues" className="py-32 md:py-48 bg-secondary/40 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
@@ -33,9 +19,14 @@ const AllIssues = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-          {issues.map((issue) => (
-            <article key={issue.number} className="group">
-              <div className="relative overflow-hidden bg-foreground/5">
+          {ISSUES.map((issue) => (
+            <article key={issue.slug} className="group">
+              <button
+                type="button"
+                onClick={() => open(issue.slug)}
+                className="relative overflow-hidden bg-foreground/5 block w-full text-left"
+                aria-label={`Open Issue ${issue.number}`}
+              >
                 <img
                   src={issue.cover}
                   alt={`Growtiva Africa Issue ${issue.number} — ${issue.title}`}
@@ -44,7 +35,7 @@ const AllIssues = () => {
                   width={1024}
                   height={1280}
                 />
-              </div>
+              </button>
 
               <div className="mt-8 flex items-baseline justify-between">
                 <span className="eyebrow">Issue {issue.number}</span>
@@ -56,10 +47,17 @@ const AllIssues = () => {
               <p className="mt-4 text-foreground/70 max-w-md">{issue.blurb}</p>
 
               <div className="mt-6 flex items-center gap-8 text-[12px] tracking-[0.2em] uppercase">
-                <a href="#read" className="link-underline">Read Issue</a>
-                <a href="#download" className="link-underline text-muted-foreground hover:text-foreground">
+                <button onClick={() => open(issue.slug)} className="link-underline">
+                  Read Issue
+                </button>
+                <button
+                  onClick={() =>
+                    toast("PDF download is coming soon. Subscribe to be notified.")
+                  }
+                  className="link-underline text-muted-foreground hover:text-foreground"
+                >
                   Download PDF
-                </a>
+                </button>
               </div>
             </article>
           ))}
