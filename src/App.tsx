@@ -26,7 +26,6 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </IssuesProvider>
-      </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
