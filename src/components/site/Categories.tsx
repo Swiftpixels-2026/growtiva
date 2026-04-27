@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 const categories = [
-  { n: "01", title: "Business", body: "Builders, operators, and the systems behind growth." },
-  { n: "02", title: "Lifestyle", body: "How ambitious Africans live, work, and design their lives." },
-  { n: "03", title: "Culture", body: "Voices, trends, and ideas shaping identity." },
-  { n: "04", title: "Money", body: "Wealth, access, and financial intelligence for a new generation." },
+  { n: "01", slug: "business", title: "Business", body: "Builders, operators, and the systems behind growth." },
+  { n: "02", slug: "lifestyle", title: "Lifestyle", body: "How ambitious Africans live, work, and design their lives." },
+  { n: "03", slug: "culture", title: "Culture", body: "Voices, trends, and ideas shaping identity." },
+  { n: "04", slug: "money", title: "Money", body: "Wealth, access, and financial intelligence for a new generation." },
 ];
 
 const Categories = () => {
@@ -16,8 +18,8 @@ const Categories = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-t border-foreground/15">
           {categories.map((c) => (
-            <a
-              href="#issues"
+            <Link
+              to={`/category/${c.slug}`}
               key={c.n}
               className="group relative p-8 md:p-10 border-b border-foreground/15 lg:border-r last:lg:border-r-0 md:[&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r min-h-[280px] flex flex-col justify-between hover:bg-foreground hover:text-background transition-colors duration-500"
             >
@@ -31,7 +33,7 @@ const Categories = () => {
                   Explore →
                 </span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

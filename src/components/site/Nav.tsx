@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Social from "./Social";
 
 const links = [
-  { label: "Issues", href: "#issues" },
-  { label: "Categories", href: "#categories" },
-  { label: "Community", href: "#community" },
-  { label: "Advertise", href: "#advertise" },
+  { label: "Issues", href: "/#issues" },
+  { label: "Categories", href: "/#categories" },
+  { label: "Directory", href: "/#directory" },
+  { label: "Community", href: "/#community" },
+  { label: "Advertise", href: "/#advertise" },
 ];
 
 const Nav = () => {
@@ -25,11 +28,11 @@ const Nav = () => {
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-        <a href="#top" className="font-serif text-lg md:text-xl tracking-tight">
+        <Link to="/" className="font-serif text-lg md:text-xl tracking-tight">
           Growtiva <span className="italic text-accent">Africa</span>
-        </a>
+        </Link>
 
-        <nav className="hidden md:flex items-center gap-10">
+        <nav className="hidden lg:flex items-center gap-8">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="text-[13px] tracking-wide link-underline">
               {l.label}
@@ -37,12 +40,15 @@ const Nav = () => {
           ))}
         </nav>
 
-        <a
-          href="#newsletter"
-          className="hidden md:inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
-        >
-          Join the Inner Circle
-        </a>
+        <div className="hidden md:flex items-center gap-6">
+          <Social className="hidden lg:flex text-foreground/70" size={16} />
+          <a
+            href="/#newsletter"
+            className="inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
+          >
+            Inner Circle
+          </a>
+        </div>
 
         <button
           aria-label="Menu"
@@ -63,12 +69,13 @@ const Nav = () => {
             </a>
           ))}
           <a
-            href="#newsletter"
+            href="/#newsletter"
             onClick={() => setOpen(false)}
             className="mt-2 inline-flex items-center justify-center text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-3"
           >
             Join the Inner Circle
           </a>
+          <Social className="mt-4 text-foreground" />
         </div>
       )}
     </header>
