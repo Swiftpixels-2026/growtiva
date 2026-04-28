@@ -52,7 +52,7 @@ const Category = () => {
     <main className="bg-background text-foreground">
       <Nav />
       <section className="pt-36 md:pt-44 pb-16 border-b border-foreground/10">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
           <Link to="/" className="eyebrow link-underline">← Growtiva</Link>
           <span className="eyebrow block mt-10">{meta.eyebrow}</span>
           <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl mt-5">
@@ -65,7 +65,7 @@ const Category = () => {
       </section>
 
       <section className="py-24 md:py-32">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
           {stories.length === 0 ? (
             <p className="text-foreground/60">New stories landing soon.</p>
           ) : (
