@@ -4,7 +4,7 @@ import Social from "./Social";
 const Footer = () => {
   return (
     <footer className="border-t border-foreground/15 py-16 md:py-20">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 md:col-span-5">
             <Link to="/" className="font-serif text-2xl">
@@ -25,15 +25,15 @@ const Footer = () => {
 
           <nav className="col-span-6 md:col-span-2 flex flex-col gap-3 text-sm">
             <span className="eyebrow mb-2">Discover</span>
-            <a href="/#directory" className="link-underline w-fit">Directory</a>
+            <Link to="/directory" className="link-underline w-fit">Directory</Link>
             <a href="/#community" className="link-underline w-fit">Community</a>
             <a href="/#advertise" className="link-underline w-fit">Advertise</a>
           </nav>
 
           <nav className="col-span-12 md:col-span-3 flex flex-col gap-3 text-sm">
             <span className="eyebrow mb-2">Contact</span>
-            <a href="mailto:hello@growtiva.africa" className="link-underline w-fit">hello@growtiva.africa</a>
-            <a href="mailto:partners@growtiva.africa" className="link-underline w-fit">partners@growtiva.africa</a>
+            <a href="mailto:hello@growtivaafrica.com" className="link-underline w-fit break-all">hello@growtivaafrica.com</a>
+            <a href="mailto:growtivaafrica@gmail.com" className="link-underline w-fit break-all">growtivaafrica@gmail.com</a>
           </nav>
         </div>
 

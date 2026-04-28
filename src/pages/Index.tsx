@@ -4,7 +4,6 @@ import Hero from "@/components/site/Hero";
 import LatestIssue from "@/components/site/LatestIssue";
 import AllIssues from "@/components/site/AllIssues";
 import Categories from "@/components/site/Categories";
-import Directory from "@/components/site/Directory";
 import Community from "@/components/site/Community";
 import Newsletter from "@/components/site/Newsletter";
 import Advertise from "@/components/site/Advertise";
@@ -31,7 +30,6 @@ const Index = () => {
       <LatestIssue />
       <AllIssues />
       <Categories />
-      <Directory />
       <Community />
       <Newsletter />
       <Advertise />

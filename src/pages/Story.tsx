@@ -36,7 +36,7 @@ const Story = () => {
 
       {/* Hero */}
       <section className="pt-36 md:pt-44 pb-16">
-        <div className="max-w-[900px] mx-auto px-6 md:px-10 text-center">
+        <div className="max-w-[900px] mx-auto px-4 sm:px-6 md:px-10 text-center">
           <Link to={`/category/${story.category}`} className="eyebrow link-underline">
             ← {story.category}
           </Link>
@@ -54,7 +54,7 @@ const Story = () => {
         </div>
       </section>
 
-      <div className="max-w-[1100px] mx-auto px-6 md:px-10">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="aspect-[16/9] overflow-hidden">
           <img
             src={story.cover}
@@ -68,7 +68,7 @@ const Story = () => {
 
       {/* Body — 50% */}
       <article className="py-20 md:py-28">
-        <div className="max-w-[680px] mx-auto px-6 md:px-10">
+        <div className="max-w-[680px] mx-auto px-4 sm:px-6 md:px-10">
           {visible.map((p, idx) => (
             <p
               key={idx}

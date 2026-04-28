@@ -7,6 +7,8 @@ import { IssuesProvider } from "@/components/site/IssuesProvider";
 import Index from "./pages/Index.tsx";
 import Category from "./pages/Category.tsx";
 import Story from "./pages/Story.tsx";
+import DirectoryPage from "./pages/DirectoryPage.tsx";
+import IssuePage from "./pages/IssuePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,9 +22,10 @@ const App = () => (
         <IssuesProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/directory" element={<DirectoryPage />} />
+            <Route path="/issues/:slug" element={<IssuePage />} />
             <Route path="/category/:slug" element={<Category />} />
             <Route path="/story/:slug" element={<Story />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </IssuesProvider>

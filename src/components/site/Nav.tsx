@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import Social from "./Social";
 
 const links = [
-  { label: "Issues", href: "/#issues" },
-  { label: "Categories", href: "/#categories" },
-  { label: "Directory", href: "/#directory" },
-  { label: "Community", href: "/#community" },
-  { label: "Advertise", href: "/#advertise" },
+  { label: "Issues", href: "/#issues", type: "anchor" as const },
+  { label: "Categories", href: "/#categories", type: "anchor" as const },
+  { label: "Directory", href: "/directory", type: "route" as const },
+  { label: "Community", href: "/#community", type: "anchor" as const },
+  { label: "Advertise", href: "/#advertise", type: "anchor" as const },
 ];
 
 const Nav = () => {
@@ -21,23 +21,30 @@ const Nav = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const renderLink = (l: typeof links[number], onClick?: () => void, className?: string) =>
+    l.type === "route" ? (
+      <Link key={l.href} to={l.href} onClick={onClick} className={className}>
+        {l.label}
+      </Link>
+    ) : (
+      <a key={l.href} href={l.href} onClick={onClick} className={className}>
+        {l.label}
+      </a>
+    );
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
         scrolled ? "bg-background/90 backdrop-blur-md border-b border-foreground/10" : "bg-transparent"
       }`}
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
         <Link to="/" className="font-serif text-lg md:text-xl tracking-tight">
           Growtiva <span className="italic text-accent">Africa</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-[13px] tracking-wide link-underline">
-              {l.label}
-            </a>
-          ))}
+          {links.map((l) => renderLink(l, undefined, "text-[13px] tracking-wide link-underline"))}
         </nav>
 
         <div className="hidden md:flex items-center gap-6">
@@ -62,12 +69,8 @@ const Nav = () => {
       </div>
 
       {open && (
-        <div className="md:hidden bg-background border-t border-foreground/10 px-6 py-8 flex flex-col gap-6">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="font-serif text-2xl">
-              {l.label}
-            </a>
-          ))}
+        <div className="md:hidden bg-background border-t border-foreground/10 px-4 sm:px-6 py-8 flex flex-col gap-6">
+          {links.map((l) => renderLink(l, () => setOpen(false), "font-serif text-2xl"))}
           <a
             href="/#newsletter"
             onClick={() => setOpen(false)}
