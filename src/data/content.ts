@@ -16,6 +16,44 @@ import spreadFeature from "@/assets/spread-feature.jpg";
 import spreadStill from "@/assets/spread-stillife.jpg";
 import spreadPeople from "@/assets/spread-people.jpg";
 
+// Vibrant city slides for hero
+import cityLagos from "@/assets/city-lagos.jpg";
+import cityNairobi from "@/assets/city-nairobi.jpg";
+import cityCapetown from "@/assets/city-capetown.jpg";
+import cityMarrakech from "@/assets/city-marrakech.jpg";
+
+// Business directory imagery (each unique)
+import bMaraCloud from "@/assets/biz/tech-mara-cloud.jpg";
+import bSokoDevices from "@/assets/biz/tech-soko-devices.jpg";
+import bPyramidAi from "@/assets/biz/tech-pyramid-ai.jpg";
+import bKenteCode from "@/assets/biz/tech-kente-code.jpg";
+import bPaystream from "@/assets/biz/tech-paystream.jpg";
+import bBaobabSec from "@/assets/biz/tech-baobab-security.jpg";
+import bAsaRecords from "@/assets/biz/music-asa-records.jpg";
+import bHighlife from "@/assets/biz/music-highlife-house.jpg";
+import bCapeSound from "@/assets/biz/music-cape-sound.jpg";
+import bKwaitoLive from "@/assets/biz/music-kwaito-live.jpg";
+import bSavanna from "@/assets/biz/music-savanna-sounds.jpg";
+import bAfrobeat from "@/assets/biz/music-afrobeat-collective.jpg";
+import bMaraLog from "@/assets/biz/biz-mara-logistics.jpg";
+import bAtlasCap from "@/assets/biz/biz-atlas-capital.jpg";
+import bNDTC from "@/assets/biz/biz-niger-delta-trade.jpg";
+import bDakar from "@/assets/biz/biz-dakar-advisory.jpg";
+import bUbuntu from "@/assets/biz/biz-ubuntu-ventures.jpg";
+import bSavLegal from "@/assets/biz/biz-savanna-legal.jpg";
+import bSahara from "@/assets/biz/auto-sahara-motors.jpg";
+import bKiliEv from "@/assets/biz/auto-kilimanjaro-ev.jpg";
+import bAtlasAuto from "@/assets/biz/auto-atlas-service.jpg";
+import bCotonou from "@/assets/biz/auto-cotonou-bikes.jpg";
+import bBaobabClass from "@/assets/biz/auto-baobab-classics.jpg";
+import bJoziFleet from "@/assets/biz/auto-jozi-fleet.jpg";
+import bAnyemi from "@/assets/biz/fashion-anyemi.jpg";
+import bKaroo from "@/assets/biz/coffee-karoo.jpg";
+import bSokoStudio from "@/assets/biz/design-soko-studio.jpg";
+import bKintu from "@/assets/biz/hosp-kintu.jpg";
+import bFreetown from "@/assets/biz/hosp-freetown-surf.jpg";
+import bDouala from "@/assets/biz/hosp-douala-eats.jpg";
+
 export type FlipPage =
   | { kind: "image"; src: string; caption?: string }
   | {
@@ -253,110 +291,142 @@ export type Business = {
 };
 
 export const BUSINESSES: Business[] = [
-  // Technology
+  // ============ Technology (6) ============
   { name: "Mara Cloud", category: "Technology", city: "Lagos", country: "Nigeria",
     blurb: "Pan-African cloud infrastructure for fast-growing teams.",
     services: "Cloud hosting, managed databases, edge compute, and 24/7 platform engineering support tailored to African startups.",
-    email: "hello@maracloud.africa", phone: "+234 800 000 0001", url: "https://maracloud.africa", image: nigeria },
+    email: "hello@maracloud.africa", phone: "+234 800 000 0001", url: "https://maracloud.africa", image: bMaraCloud },
   { name: "Soko Devices", category: "Technology", city: "Nairobi", country: "Kenya",
     blurb: "Hardware and IoT studio shipping connected devices.",
     services: "Industrial design, embedded software, certification, and small-batch manufacturing for African consumer hardware.",
-    email: "studio@sokodevices.co", phone: "+254 700 000 002", image: kenya },
+    email: "studio@sokodevices.co", phone: "+254 700 000 002", image: bSokoDevices },
   { name: "Pyramid AI", category: "Technology", city: "Cairo", country: "Egypt",
     blurb: "Applied machine learning for the Arabic-speaking web.",
     services: "Custom NLP models, OCR for Arabic and African scripts, and ML deployment infrastructure.",
-    email: "team@pyramid.ai", image: egypt },
+    email: "team@pyramid.ai", image: bPyramidAi },
   { name: "Kente Code", category: "Technology", city: "Accra", country: "Ghana",
     blurb: "Software studio building products for African businesses.",
     services: "Full-stack product development, mobile apps, and dedicated remote engineering pods.",
-    email: "build@kentecode.com", phone: "+233 200 000 003", image: ghana },
+    email: "build@kentecode.com", phone: "+233 200 000 003", image: bKenteCode },
+  { name: "Paystream", category: "Technology", city: "Kigali", country: "Rwanda",
+    blurb: "Payments rails connecting African mobile money networks.",
+    services: "Cross-border payouts, mobile money APIs, KYC, and merchant settlement across 12 African markets.",
+    email: "hello@paystream.rw", phone: "+250 780 000 010", image: bPaystream },
+  { name: "Baobab Security", category: "Technology", city: "Cape Town", country: "South Africa",
+    blurb: "Cybersecurity operations for African enterprise.",
+    services: "24/7 SOC monitoring, incident response, penetration testing, and managed detection across the continent.",
+    email: "soc@baobabsec.co.za", image: bBaobabSec },
 
-  // Music
+  // ============ Music (6) ============
   { name: "Asa Records", category: "Music", city: "Lagos", country: "Nigeria",
     blurb: "Independent label home to a new generation of Afro artists.",
     services: "A&R, distribution, publishing, and live tour production across West Africa and the diaspora.",
-    email: "label@asarecords.ng", image: nigeria },
+    email: "label@asarecords.ng", image: bAsaRecords },
   { name: "Highlife House", category: "Music", city: "Accra", country: "Ghana",
     blurb: "Studio and creative agency for Ghanaian music.",
     services: "Recording, mixing, mastering, music videos, and brand partnerships for highlife and afrobeats artists.",
-    email: "hello@highlifehouse.gh", image: ghana },
+    email: "hello@highlifehouse.gh", image: bHighlife },
   { name: "Cape Sound Lab", category: "Music", city: "Cape Town", country: "South Africa",
     blurb: "Boutique recording studio and mastering room.",
     services: "Analog tracking, hybrid mixing, and Dolby Atmos mastering for African and global artists.",
-    email: "book@capesoundlab.co.za", image: southafrica },
+    email: "book@capesoundlab.co.za", image: bCapeSound },
   { name: "Kwaito Live", category: "Music", city: "Johannesburg", country: "South Africa",
     blurb: "Live event production and booking agency.",
     services: "Festival production, artist booking, sponsorship activation, and venue partnerships.",
-    email: "live@kwaito.co.za", image: southafrica },
+    email: "live@kwaito.co.za", image: bKwaitoLive },
+  { name: "Savanna Sounds", category: "Music", city: "Nairobi", country: "Kenya",
+    blurb: "Nightlife brand and DJ collective for East Africa.",
+    services: "Resident DJs, event curation, brand activations, and limited vinyl pressings.",
+    email: "bookings@savannasounds.ke", image: bSavanna },
+  { name: "Afrobeat Collective", category: "Music", city: "Lagos", country: "Nigeria",
+    blurb: "Producer co-op crafting beats for global artists.",
+    services: "Production, beat licensing, songwriting camps, and mentorship for emerging producers.",
+    email: "studio@afrobeatcollective.com", image: bAfrobeat },
 
-  // Business
+  // ============ Business (6) ============
   { name: "Mara Logistics", category: "Business", city: "Lagos", country: "Nigeria",
     blurb: "Inland freight infrastructure for fast-moving goods.",
     services: "Long-haul freight, last-mile delivery, fleet leasing, and supply chain analytics across Nigeria and Ghana.",
-    email: "ops@maralogistics.africa", phone: "+234 800 000 0010", image: nigeria },
+    email: "ops@maralogistics.africa", phone: "+234 800 000 0010", image: bMaraLog },
   { name: "Atlas Capital", category: "Business", city: "Casablanca", country: "Morocco",
     blurb: "Private credit for mid-market operators across the Maghreb.",
     services: "Working capital, growth debt, and structured finance for established African SMEs.",
-    email: "deals@atlas-capital.africa", image: morocco },
+    email: "deals@atlas-capital.africa", image: bAtlasCap },
   { name: "Niger Delta Trade Co.", category: "Business", city: "Port Harcourt", country: "Nigeria",
     blurb: "Commodity trading and export advisory.",
     services: "Sourcing, export documentation, quality control, and buyer matching for African agricultural commodities.",
-    email: "trade@ndtc.ng", image: nigeria },
+    email: "trade@ndtc.ng", image: bNDTC },
   { name: "Dakar Advisory", category: "Business", city: "Dakar", country: "Senegal",
     blurb: "Strategy consultancy for francophone West Africa.",
     services: "Market entry, regulatory navigation, and growth strategy for businesses entering francophone markets.",
-    email: "contact@dakaradvisory.com", image: morocco },
+    email: "contact@dakaradvisory.com", image: bDakar },
+  { name: "Ubuntu Ventures", category: "Business", city: "Cape Town", country: "South Africa",
+    blurb: "Early-stage venture studio and accelerator.",
+    services: "Pre-seed capital, co-working, founder coaching, and shared operations for African startups.",
+    email: "team@ubuntuventures.co", image: bUbuntu },
+  { name: "Savanna Legal", category: "Business", city: "Nairobi", country: "Kenya",
+    blurb: "Boutique corporate law firm for growing companies.",
+    services: "Corporate structuring, fundraising documentation, IP, and cross-border deal advisory.",
+    email: "partners@savannalegal.ke", image: bSavLegal },
 
-  // Automobile
+  // ============ Automobile (6) ============
   { name: "Sahara Motors", category: "Automobile", city: "Lagos", country: "Nigeria",
     blurb: "Premium pre-owned imports and concierge sales.",
     services: "Sourcing, importation, registration, and white-glove delivery of premium vehicles across Nigeria.",
-    email: "sales@saharamotors.ng", phone: "+234 800 000 0020", image: nigeria },
+    email: "sales@saharamotors.ng", phone: "+234 800 000 0020", image: bSahara },
   { name: "Kilimanjaro EV", category: "Automobile", city: "Nairobi", country: "Kenya",
     blurb: "Electric mobility for East Africa.",
     services: "EV imports, charging infrastructure, and fleet electrification for ride-hail and logistics operators.",
-    email: "drive@kilimanjaro.ev", image: kenya },
+    email: "drive@kilimanjaro.ev", image: bKiliEv },
   { name: "Atlas Auto Service", category: "Automobile", city: "Marrakech", country: "Morocco",
     blurb: "European-trained service center for luxury vehicles.",
     services: "Service, diagnostics, parts, and restoration for European marques across North Africa.",
-    email: "service@atlasauto.ma", image: morocco },
+    email: "service@atlasauto.ma", image: bAtlasAuto },
   { name: "Cotonou Bikes", category: "Automobile", city: "Cotonou", country: "Benin",
     blurb: "Motorcycle distribution and financing for riders.",
     services: "Bike sales, work-to-own financing, training, and roadside support for commercial riders.",
-    email: "ride@cotonoubikes.bj", image: benin },
+    email: "ride@cotonoubikes.bj", image: bCotonou },
+  { name: "Baobab Classics", category: "Automobile", city: "Dakar", country: "Senegal",
+    blurb: "Restoration house for vintage African automobiles.",
+    services: "Full restorations, sourcing, concours preparation, and private collection management.",
+    email: "garage@baobabclassics.sn", image: bBaobabClass },
+  { name: "Jozi Fleet", category: "Automobile", city: "Johannesburg", country: "South Africa",
+    blurb: "Commercial fleet leasing for logistics operators.",
+    services: "Long-term leasing, telematics, maintenance, and driver management for last-mile fleets.",
+    email: "fleet@jozifleet.co.za", image: bJoziFleet },
 
-  // Fashion / Hospitality / Design / Coffee (existing, kept)
+  // ============ Other (existing categories preserved) ============
   { name: "Anyẹmi Atelier", category: "Fashion", city: "Accra", country: "Ghana",
     blurb: "Unstructured tailoring in locally woven cotton.",
     services: "Made-to-measure tailoring, ready-to-wear collections, and bespoke commissions for global clients.",
-    email: "atelier@anyemi.gh", image: ghana },
+    email: "atelier@anyemi.gh", image: bAnyemi },
   { name: "Karoo & Co.", category: "Coffee", city: "Cape Town", country: "South Africa",
     blurb: "Specialty roastery sourcing single-origin African beans.",
     services: "Roasting, wholesale supply, café build-outs, and direct trade sourcing across the continent.",
-    email: "hello@karoo.coffee", image: southafrica },
+    email: "hello@karoo.coffee", image: bKaroo },
   { name: "Soko Studio", category: "Design", city: "Nairobi", country: "Kenya",
     blurb: "Industrial design studio for African consumer brands.",
     services: "Brand identity, packaging design, product strategy, and prototyping.",
-    email: "studio@sokodesign.co", image: kenya },
+    email: "studio@sokodesign.co", image: bSokoStudio },
   { name: "Kintu Coffee Bar", category: "Hospitality", city: "Kampala", country: "Uganda",
     blurb: "Daytime café and evening listening room.",
     services: "Café service, private events, listening sessions, and cultural programming.",
-    email: "hello@kintu.ug", image: kenya },
+    email: "hello@kintu.ug", image: bKintu },
   { name: "Freetown Surf Co.", category: "Hospitality", city: "Freetown", country: "Sierra Leone",
     blurb: "Beachfront retreat and surf school on the Atlantic.",
     services: "Boutique stays, surf coaching, retreats, and private group bookings.",
-    email: "stay@freetownsurf.sl", image: sierraleone },
+    email: "stay@freetownsurf.sl", image: bFreetown },
   { name: "Douala Eats", category: "Hospitality", city: "Douala", country: "Cameroon",
     blurb: "Modern Cameroonian restaurant group.",
     services: "Restaurants, catering, private dining, and culinary residencies.",
-    email: "reservations@doualaeats.cm", image: cameroon },
+    email: "reservations@doualaeats.cm", image: bDouala },
 ];
 
 export const COUNTRY_SLIDES = [
-  { src: nigeria, country: "Nigeria", place: "Lagos" },
-  { src: kenya, country: "Kenya", place: "Nairobi" },
-  { src: southafrica, country: "South Africa", place: "Cape Town" },
-  { src: morocco, country: "Morocco", place: "Marrakech" },
+  { src: cityLagos, country: "Nigeria", place: "Lagos" },
+  { src: cityNairobi, country: "Kenya", place: "Nairobi" },
+  { src: cityCapetown, country: "South Africa", place: "Cape Town" },
+  { src: cityMarrakech, country: "Morocco", place: "Marrakech" },
   { src: ghana, country: "Ghana", place: "Accra" },
   { src: cameroon, country: "Cameroon", place: "Douala" },
   { src: sierraleone, country: "Sierra Leone", place: "Freetown" },
