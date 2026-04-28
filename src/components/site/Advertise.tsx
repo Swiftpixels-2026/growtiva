@@ -79,11 +79,13 @@ const Advertise = () => {
             <div className="mt-10 grid grid-cols-2 gap-6 max-w-md">
               <div>
                 <span className="eyebrow">Half Page</span>
-                <div className="font-serif text-2xl mt-2">₦50,000</div>
+                <div className="font-serif text-2xl mt-2">₦75,000</div>
+                <div className="text-sm text-foreground/60 mt-1">or $80</div>
               </div>
               <div>
                 <span className="eyebrow">Full Page</span>
-                <div className="font-serif text-2xl mt-2">₦100,000</div>
+                <div className="font-serif text-2xl mt-2">₦150,000</div>
+                <div className="text-sm text-foreground/60 mt-1">or $120</div>
               </div>
             </div>
           </div>
@@ -153,9 +155,9 @@ const Advertise = () => {
                     onChange={(e) => setForm({ ...form, budget: e.target.value })}
                     className={`${inputClass} w-full mt-1`}>
                     <option value="">Select...</option>
-                    <option>Under ₦50,000</option>
-                    <option>₦50,000 – ₦100,000</option>
-                    <option>₦100,000 – ₦500,000</option>
+                    <option>Under ₦75,000</option>
+                    <option>₦75,000 – ₦150,000</option>
+                    <option>₦150,000 – ₦500,000</option>
                     <option>₦500,000 – ₦1,000,000</option>
                     <option>Above ₦1,000,000</option>
                   </select>
@@ -167,8 +169,8 @@ const Advertise = () => {
                     onChange={(e) => setForm({ ...form, pageSize: e.target.value })}
                     className={`${inputClass} w-full mt-1`}>
                     <option value="">Select...</option>
-                    <option>Half Page (₦50,000)</option>
-                    <option>Full Page (₦100,000)</option>
+                    <option>Half Page (₦75,000 / $80)</option>
+                    <option>Full Page (₦150,000 / $120)</option>
                   </select>
                 </label>
 
