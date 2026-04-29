@@ -1,47 +1,104 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import portrait from "@/assets/community-portrait.jpg";
+import collage2 from "@/assets/community-collage-2.jpg";
+import collage3 from "@/assets/community-collage-3.jpg";
+
+const gallery = [
+  { src: portrait, alt: "Editorial collage of African creatives and founders" },
+  { src: collage2, alt: "Portraits of African artists, designers and entrepreneurs" },
+  { src: collage3, alt: "African creatives in studios, ateliers and city rooftops" },
+];
 
 const Community = () => {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setActive((i) => (i + 1) % gallery.length), 4500);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section id="community" className="py-32 md:py-48 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-5">
-            <div className="aspect-[4/5] overflow-hidden">
-              <img
-                src={portrait}
-                alt="Editorial portrait of an African creative professional"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                width={1080}
-                height={1600}
-              />
+            <div className="aspect-[4/5] overflow-hidden relative bg-foreground/5">
+              {gallery.map((g, i) => (
+                <img
+                  key={g.src}
+                  src={g.src}
+                  alt={g.alt}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1400ms] ease-in-out ${
+                    i === active ? "opacity-100" : "opacity-0"
+                  }`}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  width={1080}
+                  height={1600}
+                />
+              ))}
             </div>
           </div>
 
           <div className="col-span-12 lg:col-span-7 lg:pl-8">
             <span className="eyebrow">The Inner Circle</span>
             <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl mt-6 leading-[1.02]">
-              A network <span className="italic text-accent">behind</span> the pages
+              A private network <span className="italic text-accent">behind</span> the pages
             </h2>
 
             <div className="rule my-10 max-w-[120px]" />
 
             <p className="text-base text-foreground/75 max-w-xl leading-relaxed">
-              Growtiva Africa is more than a publication. It's a growing network of
-              builders, creatives, and thinkers contributing to a shared narrative of
-              modern Africa.
+              The Inner Circle is a curated membership of founders, creatives,
+              and cultural architects shaping a new African century. Members
+              receive each issue first, alongside private briefings, salons,
+              and introductions reserved for the few.
             </p>
             <p className="mt-5 text-base text-foreground/75 max-w-xl leading-relaxed">
-              The stories don't just live here—they're shaped by the people reading,
-              sharing, and building alongside them.
+              This is where the next chapter is written—quietly, deliberately,
+              and in the company of equals.
             </p>
 
-            <a
-              href="#newsletter"
+            <Link
+              to="/join"
               className="mt-12 inline-flex items-center gap-3 bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
             >
-              Join the Community
-            </a>
+              Join the Inner Circle
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-20 md:mt-28">
+          <div className="flex items-end justify-between mb-6">
+            <span className="eyebrow">Field Notes</span>
+            <div className="flex gap-2">
+              {gallery.map((_, i) => (
+                <button
+                  key={i}
+                  aria-label={`Show collage ${i + 1}`}
+                  onClick={() => setActive(i)}
+                  className={`h-px transition-all duration-500 ${
+                    i === active ? "w-12 bg-foreground" : "w-6 bg-foreground/30"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="relative aspect-[16/7] overflow-hidden bg-foreground/5">
+            {gallery.map((g, i) => (
+              <img
+                key={g.src}
+                src={g.src}
+                alt={g.alt}
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1600ms] ease-in-out ${
+                  i === active ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                }`}
+                loading="lazy"
+                width={1920}
+                height={840}
+              />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
       </div>

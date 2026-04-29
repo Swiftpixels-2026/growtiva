@@ -49,12 +49,12 @@ const Nav = () => {
 
         <div className="hidden md:flex items-center gap-6">
           <Social className="hidden lg:flex text-foreground/70" size={16} />
-          <a
-            href="/#newsletter"
+          <Link
+            to="/join"
             className="inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
           >
             Inner Circle
-          </a>
+          </Link>
         </div>
 
         <button
@@ -71,13 +71,13 @@ const Nav = () => {
       {open && (
         <div className="md:hidden bg-background border-t border-foreground/10 px-4 sm:px-6 py-8 flex flex-col gap-6">
           {links.map((l) => renderLink(l, () => setOpen(false), "font-serif text-2xl"))}
-          <a
-            href="/#newsletter"
+          <Link
+            to="/join"
             onClick={() => setOpen(false)}
             className="mt-2 inline-flex items-center justify-center text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-3"
           >
             Join the Inner Circle
-          </a>
+          </Link>
           <Social className="mt-4 text-foreground" />
         </div>
       )}
