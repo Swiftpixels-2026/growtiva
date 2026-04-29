@@ -338,6 +338,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Cybersecurity operations for African enterprise.",
     services: "24/7 SOC monitoring, incident response, penetration testing, and managed detection across the continent.",
     email: "soc@baobabsec.co.za", image: bBaobabSec },
+  { name: "Lagos Fintech Labs", category: "Technology", city: "Lagos", country: "Nigeria",
+    blurb: "Product studio building consumer fintech for West Africa.",
+    services: "Mobile banking products, lending platforms, KYC/onboarding, and growth engineering.",
+    email: "labs@lagosfintech.ng", image: bTechFintech },
+  { name: "Sahara DataCenter", category: "Technology", city: "Casablanca", country: "Morocco",
+    blurb: "Tier-III colocation and managed hosting for North Africa.",
+    services: "Colocation, dedicated servers, private cloud, DDoS protection, and disaster recovery.",
+    email: "ops@saharadatacenter.ma", image: bTechDC },
 
   // ============ Music (6) ============
   { name: "Asa Records", category: "Music", city: "Lagos", country: "Nigeria",
