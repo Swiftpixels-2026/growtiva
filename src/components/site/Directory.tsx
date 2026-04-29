@@ -5,10 +5,10 @@ import { Search, X } from "lucide-react";
 import { BUSINESSES } from "@/data/content";
 import { slugify } from "@/lib/slug";
 
-const FEATURED = ["All", "Technology", "Music", "Business", "Automobile"];
+const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality"];
 
 const Directory = ({ embedded = false }: { embedded?: boolean }) => {
-  const [filter, setFilter] = useState<string>("All");
+  const [filter, setFilter] = useState<string>("Technology");
   const [query, setQuery] = useState("");
   const [form, setForm] = useState({ name: "", email: "", business: "", category: "", city: "", note: "" });
 
@@ -19,13 +19,13 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   const allCategories = [...FEATURED, ...otherCategories];
 
   const counts = useMemo(() => {
-    const map: Record<string, number> = { All: BUSINESSES.length };
+    const map: Record<string, number> = {};
     for (const b of BUSINESSES) map[b.category] = (map[b.category] ?? 0) + 1;
     return map;
   }, []);
 
   const filtered = useMemo(() => {
-    const base = filter === "All" ? BUSINESSES : BUSINESSES.filter((b) => b.category === filter);
+    const base = BUSINESSES.filter((b) => b.category === filter);
     const q = query.trim().toLowerCase();
     if (!q) return base;
     return base.filter(
