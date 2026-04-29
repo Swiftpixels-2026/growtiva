@@ -53,6 +53,28 @@ import bSokoStudio from "@/assets/biz/design-soko-studio.jpg";
 import bKintu from "@/assets/biz/hosp-kintu.jpg";
 import bFreetown from "@/assets/biz/hosp-freetown-surf.jpg";
 import bDouala from "@/assets/biz/hosp-douala-eats.jpg";
+// New additions
+import bTechFintech from "@/assets/biz/tech-lagos-fintech.jpg";
+import bTechDC from "@/assets/biz/tech-datacenter.jpg";
+import bMusicDakarDJ from "@/assets/biz/music-dakar-dj.jpg";
+import bMusicVinyl from "@/assets/biz/music-vinyl-press.jpg";
+import bBizConsult from "@/assets/biz/biz-consult.jpg";
+import bBizSupply from "@/assets/biz/biz-supply.jpg";
+import bAutoSuv from "@/assets/biz/auto-luxury-suv.jpg";
+import bAutoCairo from "@/assets/biz/auto-cairo-taxi.jpg";
+import bHospZanzibar from "@/assets/biz/hosp-zanzibar-hotel.jpg";
+import bHospLagosBnb from "@/assets/biz/hosp-lagos-airbnb.jpg";
+import bHospMarrakech from "@/assets/biz/hosp-marrakech-riad.jpg";
+import bHospCpBnb from "@/assets/biz/hosp-capetown-airbnb.jpg";
+import bHospSafari from "@/assets/biz/hosp-mara-safari.jpg";
+import bRestLagos from "@/assets/biz/rest-lagos-jollof.jpg";
+import bRestAddis from "@/assets/biz/rest-addis-injera.jpg";
+import bRestMarrakech from "@/assets/biz/rest-marrakech-tagine.jpg";
+import bRestJburg from "@/assets/biz/rest-jburg-braai.jpg";
+import bRestNairobi from "@/assets/biz/rest-nairobi-rooftop.jpg";
+import bRestDakar from "@/assets/biz/rest-dakar-seafood.jpg";
+import bRestAccra from "@/assets/biz/rest-accra-waakye.jpg";
+import bRestCairo from "@/assets/biz/rest-cairo-koshary.jpg";
 
 export type FlipPage =
   | { kind: "image"; src: string; caption?: string }
