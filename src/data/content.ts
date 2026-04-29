@@ -53,6 +53,28 @@ import bSokoStudio from "@/assets/biz/design-soko-studio.jpg";
 import bKintu from "@/assets/biz/hosp-kintu.jpg";
 import bFreetown from "@/assets/biz/hosp-freetown-surf.jpg";
 import bDouala from "@/assets/biz/hosp-douala-eats.jpg";
+// New additions
+import bTechFintech from "@/assets/biz/tech-lagos-fintech.jpg";
+import bTechDC from "@/assets/biz/tech-datacenter.jpg";
+import bMusicDakarDJ from "@/assets/biz/music-dakar-dj.jpg";
+import bMusicVinyl from "@/assets/biz/music-vinyl-press.jpg";
+import bBizConsult from "@/assets/biz/biz-consult.jpg";
+import bBizSupply from "@/assets/biz/biz-supply.jpg";
+import bAutoSuv from "@/assets/biz/auto-luxury-suv.jpg";
+import bAutoCairo from "@/assets/biz/auto-cairo-taxi.jpg";
+import bHospZanzibar from "@/assets/biz/hosp-zanzibar-hotel.jpg";
+import bHospLagosBnb from "@/assets/biz/hosp-lagos-airbnb.jpg";
+import bHospMarrakech from "@/assets/biz/hosp-marrakech-riad.jpg";
+import bHospCpBnb from "@/assets/biz/hosp-capetown-airbnb.jpg";
+import bHospSafari from "@/assets/biz/hosp-mara-safari.jpg";
+import bRestLagos from "@/assets/biz/rest-lagos-jollof.jpg";
+import bRestAddis from "@/assets/biz/rest-addis-injera.jpg";
+import bRestMarrakech from "@/assets/biz/rest-marrakech-tagine.jpg";
+import bRestJburg from "@/assets/biz/rest-jburg-braai.jpg";
+import bRestNairobi from "@/assets/biz/rest-nairobi-rooftop.jpg";
+import bRestDakar from "@/assets/biz/rest-dakar-seafood.jpg";
+import bRestAccra from "@/assets/biz/rest-accra-waakye.jpg";
+import bRestCairo from "@/assets/biz/rest-cairo-koshary.jpg";
 
 export type FlipPage =
   | { kind: "image"; src: string; caption?: string }
@@ -316,6 +338,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Cybersecurity operations for African enterprise.",
     services: "24/7 SOC monitoring, incident response, penetration testing, and managed detection across the continent.",
     email: "soc@baobabsec.co.za", image: bBaobabSec },
+  { name: "Lagos Fintech Labs", category: "Technology", city: "Lagos", country: "Nigeria",
+    blurb: "Product studio building consumer fintech for West Africa.",
+    services: "Mobile banking products, lending platforms, KYC/onboarding, and growth engineering.",
+    email: "labs@lagosfintech.ng", image: bTechFintech },
+  { name: "Sahara DataCenter", category: "Technology", city: "Casablanca", country: "Morocco",
+    blurb: "Tier-III colocation and managed hosting for North Africa.",
+    services: "Colocation, dedicated servers, private cloud, DDoS protection, and disaster recovery.",
+    email: "ops@saharadatacenter.ma", image: bTechDC },
 
   // ============ Music (6) ============
   { name: "Asa Records", category: "Music", city: "Lagos", country: "Nigeria",
@@ -342,8 +372,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Producer co-op crafting beats for global artists.",
     services: "Production, beat licensing, songwriting camps, and mentorship for emerging producers.",
     email: "studio@afrobeatcollective.com", image: bAfrobeat },
-
-  // ============ Business (6) ============
+  { name: "Dakar Decks", category: "Music", city: "Dakar", country: "Senegal",
+    blurb: "Female-led DJ collective shaping West African nightlife.",
+    services: "DJ residencies, brand activations, festival curation, and mentorship for emerging female DJs.",
+    email: "decks@dakardecks.sn", image: bMusicDakarDJ },
+  { name: "Addis Vinyl Press", category: "Music", city: "Addis Ababa", country: "Ethiopia",
+    blurb: "Boutique vinyl pressing for African independent labels.",
+    services: "Short-run vinyl pressing, sleeve printing, mastering for vinyl, and global fulfillment.",
+    email: "press@addisvinyl.et", image: bMusicVinyl },
   { name: "Mara Logistics", category: "Business", city: "Lagos", country: "Nigeria",
     blurb: "Inland freight infrastructure for fast-moving goods.",
     services: "Long-haul freight, last-mile delivery, fleet leasing, and supply chain analytics across Nigeria and Ghana.",
@@ -368,6 +404,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Boutique corporate law firm for growing companies.",
     services: "Corporate structuring, fundraising documentation, IP, and cross-border deal advisory.",
     email: "partners@savannalegal.ke", image: bSavLegal },
+  { name: "Sahel Strategy Group", category: "Business", city: "Abidjan", country: "Côte d'Ivoire",
+    blurb: "Management consultancy serving francophone enterprise.",
+    services: "Operating model design, transformation programs, and executive advisory across the Sahel.",
+    email: "partners@sahelstrategy.ci", image: bBizConsult },
+  { name: "Baobab Supply Co.", category: "Business", city: "Mombasa", country: "Kenya",
+    blurb: "End-to-end supply chain for African manufacturers.",
+    services: "Procurement, warehousing, customs clearance, and distribution across East Africa.",
+    email: "ops@baobabsupply.ke", image: bBizSupply },
 
   // ============ Automobile (6) ============
   { name: "Sahara Motors", category: "Automobile", city: "Lagos", country: "Nigeria",
@@ -394,6 +438,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Commercial fleet leasing for logistics operators.",
     services: "Long-term leasing, telematics, maintenance, and driver management for last-mile fleets.",
     email: "fleet@jozifleet.co.za", image: bJoziFleet },
+  { name: "Cape Luxe Auto", category: "Automobile", city: "Cape Town", country: "South Africa",
+    blurb: "Concierge dealer for luxury and performance SUVs.",
+    services: "Bespoke sourcing, financing, ceramic detailing, and chauffeured handover.",
+    email: "concierge@capeluxeauto.co.za", image: bAutoSuv },
+  { name: "Cairo Cab Co.", category: "Automobile", city: "Cairo", country: "Egypt",
+    blurb: "Heritage taxi fleet operator and tour service.",
+    services: "City rides, airport transfers, and curated heritage tours in classic yellow cabs.",
+    email: "rides@cairocab.eg", image: bAutoCairo },
 
   // ============ Other (existing categories preserved) ============
   { name: "Anyẹmi Atelier", category: "Fashion", city: "Accra", country: "Ghana",
@@ -416,10 +468,66 @@ export const BUSINESSES: Business[] = [
     blurb: "Beachfront retreat and surf school on the Atlantic.",
     services: "Boutique stays, surf coaching, retreats, and private group bookings.",
     email: "stay@freetownsurf.sl", image: bFreetown },
-  { name: "Douala Eats", category: "Hospitality", city: "Douala", country: "Cameroon",
+  { name: "Douala Eats", category: "Restaurant", city: "Douala", country: "Cameroon",
     blurb: "Modern Cameroonian restaurant group.",
     services: "Restaurants, catering, private dining, and culinary residencies.",
     email: "reservations@doualaeats.cm", image: bDouala },
+
+  // ============ Hospitality (hotels & airbnbs) ============
+  { name: "Zanzibar Beach Hotel", category: "Hospitality", city: "Stone Town", country: "Tanzania",
+    blurb: "Oceanfront boutique hotel on the Indian Ocean.",
+    services: "Suites, spa, private dhow charters, and destination weddings.",
+    email: "stay@zanzibarbeach.co.tz", image: bHospZanzibar },
+  { name: "Lekki Loft Stays", category: "Hospitality", city: "Lagos", country: "Nigeria",
+    blurb: "Designer Airbnb apartments across Lekki and Ikoyi.",
+    services: "Short-term rentals, concierge, airport pickup, and curated city itineraries.",
+    email: "book@lekkilofts.ng", image: bHospLagosBnb },
+  { name: "Riad Yasmine", category: "Hospitality", city: "Marrakech", country: "Morocco",
+    blurb: "Restored riad hotel in the Medina.",
+    services: "Boutique rooms, hammam, rooftop dining, and private medina tours.",
+    email: "concierge@riadyasmine.ma", image: bHospMarrakech },
+  { name: "Table View Airbnb", category: "Hospitality", city: "Cape Town", country: "South Africa",
+    blurb: "Mid-century apartments with Table Mountain views.",
+    services: "Short and mid-stay rentals, weekly housekeeping, and remote-work setup.",
+    email: "host@tableviewbnb.co.za", image: bHospCpBnb },
+  { name: "Mara Plains Lodge", category: "Hospitality", city: "Maasai Mara", country: "Kenya",
+    blurb: "Luxury tented safari lodge in the Mara.",
+    services: "All-inclusive safari stays, game drives, balloon tours, and private guides.",
+    email: "reserve@maraplainslodge.ke", image: bHospSafari },
+
+  // ============ Restaurant ============
+  { name: "Jollof House Lagos", category: "Restaurant", city: "Lagos", country: "Nigeria",
+    blurb: "Modern Nigerian fine dining anchored by jollof rice.",
+    services: "À la carte dining, tasting menus, private events, and chef's table experiences.",
+    email: "reservations@jollofhouse.ng", image: bRestLagos },
+  { name: "Habesha Kitchen", category: "Restaurant", city: "Addis Ababa", country: "Ethiopia",
+    blurb: "Traditional Ethiopian restaurant serving injera and stews.",
+    services: "Family-style dining, coffee ceremonies, and live cultural performances.",
+    email: "hello@habeshakitchen.et", image: bRestAddis },
+  { name: "Tagine House", category: "Restaurant", city: "Marrakech", country: "Morocco",
+    blurb: "Slow-cooked Moroccan tagines in a lantern-lit medina riad.",
+    services: "Lunch and dinner service, cooking classes, and private medina dining experiences.",
+    email: "book@taginehouse.ma", image: bRestMarrakech },
+  { name: "Smoke & Bone Braai", category: "Restaurant", city: "Johannesburg", country: "South Africa",
+    blurb: "South African braai house and meat-forward grill.",
+    services: "Open-fire grilling, butcher selections, wine pairings, and weekend long lunches.",
+    email: "table@smokeandbone.co.za", image: bRestJburg },
+  { name: "Skyline Nairobi", category: "Restaurant", city: "Nairobi", country: "Kenya",
+    blurb: "Rooftop restaurant with modern East African plates.",
+    services: "Sundowner cocktails, multi-course dining, and private rooftop events.",
+    email: "reserve@skylinenairobi.ke", image: bRestNairobi },
+  { name: "Le Thieb", category: "Restaurant", city: "Dakar", country: "Senegal",
+    blurb: "Beachfront seafood spot famed for thieboudienne.",
+    services: "Daily fresh seafood, beach lunches, and group bookings.",
+    email: "bonjour@lethieb.sn", image: bRestDakar },
+  { name: "Waakye & Co.", category: "Restaurant", city: "Accra", country: "Ghana",
+    blurb: "Contemporary Ghanaian café elevating local classics.",
+    services: "All-day dining, takeaway, brunch service, and cultural pop-ups.",
+    email: "hello@waakyeandco.gh", image: bRestAccra },
+  { name: "Koshary Cairo", category: "Restaurant", city: "Cairo", country: "Egypt",
+    blurb: "Cairo institution serving the city's signature koshary.",
+    services: "Dine-in, delivery, family-size platters, and corporate catering.",
+    email: "orders@kosharycairo.eg", image: bRestCairo },
 ];
 
 export const COUNTRY_SLIDES = [
