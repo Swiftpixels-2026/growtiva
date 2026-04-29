@@ -10,6 +10,7 @@ import Story from "./pages/Story.tsx";
 import DirectoryPage from "./pages/DirectoryPage.tsx";
 import BusinessPage from "./pages/BusinessPage.tsx";
 import IssuePage from "./pages/IssuePage.tsx";
+import Join from "./pages/Join.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/directory" element={<DirectoryPage />} />
             <Route path="/business/:slug" element={<BusinessPage />} />
             <Route path="/issues/:slug" element={<IssuePage />} />
+            <Route path="/join" element={<Join />} />
             <Route path="/category/:slug" element={<Category />} />
             <Route path="/story/:slug" element={<Story />} />
             <Route path="*" element={<NotFound />} />
