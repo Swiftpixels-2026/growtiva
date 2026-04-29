@@ -438,6 +438,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Commercial fleet leasing for logistics operators.",
     services: "Long-term leasing, telematics, maintenance, and driver management for last-mile fleets.",
     email: "fleet@jozifleet.co.za", image: bJoziFleet },
+  { name: "Cape Luxe Auto", category: "Automobile", city: "Cape Town", country: "South Africa",
+    blurb: "Concierge dealer for luxury and performance SUVs.",
+    services: "Bespoke sourcing, financing, ceramic detailing, and chauffeured handover.",
+    email: "concierge@capeluxeauto.co.za", image: bAutoSuv },
+  { name: "Cairo Cab Co.", category: "Automobile", city: "Cairo", country: "Egypt",
+    blurb: "Heritage taxi fleet operator and tour service.",
+    services: "City rides, airport transfers, and curated heritage tours in classic yellow cabs.",
+    email: "rides@cairocab.eg", image: bAutoCairo },
 
   // ============ Other (existing categories preserved) ============
   { name: "Anyẹmi Atelier", category: "Fashion", city: "Accra", country: "Ghana",
