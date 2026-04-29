@@ -113,19 +113,39 @@ const Flipbook = ({ issue, onClose }: Props) => {
   const bookRef = useRef<any>(null);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState({ w: 420, h: 560 });
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (!issue) return;
     const compute = () => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const maxSpreadW = Math.min(vw * 0.94, 1180);
-      const maxH = vh * 0.78;
-      let pageW = maxSpreadW / 2;
-      let pageH = pageW * 1.32;
-      if (pageH > maxH) {
-        pageH = maxH;
-        pageW = pageH / 1.32;
+      const mobile = vw < 768;
+      setIsMobile(mobile);
+      // Reserve space for header (~56) + footer (~56) + padding
+      const chromeH = 56 + 56 + 24;
+      const maxH = vh - chromeH;
+      const ratio = 1.4; // page aspect h/w
+
+      let pageW: number;
+      let pageH: number;
+
+      if (mobile) {
+        // Single page shown — fill width
+        pageW = Math.min(vw - 24, 520);
+        pageH = pageW * ratio;
+        if (pageH > maxH) {
+          pageH = maxH;
+          pageW = pageH / ratio;
+        }
+      } else {
+        const maxSpreadW = Math.min(vw * 0.94, 1180);
+        pageW = maxSpreadW / 2;
+        pageH = pageW * ratio;
+        if (pageH > maxH) {
+          pageH = maxH;
+          pageW = pageH / ratio;
+        }
       }
       setSize({ w: Math.floor(pageW), h: Math.floor(pageH) });
     };
@@ -168,49 +188,53 @@ const Flipbook = ({ issue, onClose }: Props) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-foreground/95 backdrop-blur-sm flex flex-col animate-fade-up">
-      <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 h-16 border-b border-background/10 text-background">
-        <div className="flex flex-col leading-tight min-w-0">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-background/60">
+      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-b border-background/10 text-background gap-2">
+        <div className="flex flex-col leading-tight min-w-0 flex-1">
+          <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-background/60 truncate">
             Issue {issue.number} · {issue.volume}
           </span>
-          <span className="font-serif text-base md:text-lg truncate">{issue.title}</span>
+          <span className="font-serif text-sm sm:text-base md:text-lg truncate">{issue.title}</span>
         </div>
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4 shrink-0">
           <button
             onClick={share}
-            className="hidden sm:inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 px-4 py-2 hover:bg-background hover:text-foreground transition-colors"
+            aria-label="Share"
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 p-2 sm:px-4 sm:py-2 hover:bg-background hover:text-foreground transition-colors"
           >
-            <Share2 size={14} /> Share
+            <Share2 size={14} /> <span className="hidden sm:inline">Share</span>
           </button>
           {issue.pdfUrl && (
             <a
               href={issue.pdfUrl}
               download
-              className="hidden sm:inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 px-4 py-2 hover:bg-background hover:text-foreground transition-colors"
+              aria-label="Download PDF"
+              className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 p-2 sm:px-4 sm:py-2 hover:bg-background hover:text-foreground transition-colors"
             >
-              <Download size={14} /> PDF
+              <Download size={14} /> <span className="hidden sm:inline">PDF</span>
             </a>
           )}
           <button onClick={onClose} aria-label="Close flipbook" className="p-2 hover:text-accent transition-colors">
-            <X size={22} />
+            <X size={20} />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 py-4 md:py-6">
+      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 py-3 md:py-6 overflow-hidden">
         {/* @ts-expect-error - react-pageflip types are loose */}
         <HTMLFlipBook
+          key={isMobile ? "m" : "d"}
           ref={bookRef}
           width={size.w}
           height={size.h}
-          size="stretch"
-          minWidth={280}
+          size="fixed"
+          minWidth={260}
           maxWidth={760}
           minHeight={350}
           maxHeight={1000}
           drawShadow
           showCover
           mobileScrollSupport
+          usePortrait={isMobile}
           className="shadow-[0_40px_120px_rgba(0,0,0,0.6)]"
           onFlip={(e: any) => setPage(e.data)}
         >
@@ -224,21 +248,21 @@ const Flipbook = ({ issue, onClose }: Props) => {
         </HTMLFlipBook>
       </div>
 
-      <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 h-16 border-t border-background/10 text-background">
+      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-t border-background/10 text-background">
         <button
           onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
-          className="flex items-center gap-2 text-[11px] md:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
+          className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
         >
-          <ChevronLeft size={16} /> Prev
+          <ChevronLeft size={16} /> <span className="hidden sm:inline">Prev</span>
         </button>
         <span className="text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-background/60">
-          Page {Math.min(page + 1, total)} / {total}
+          {Math.min(page + 1, total)} / {total}
         </span>
         <button
           onClick={() => bookRef.current?.pageFlip()?.flipNext()}
-          className="flex items-center gap-2 text-[11px] md:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
+          className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
         >
-          Next <ChevronRight size={16} />
+          <span className="hidden sm:inline">Next</span> <ChevronRight size={16} />
         </button>
       </div>
     </div>
