@@ -404,6 +404,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Boutique corporate law firm for growing companies.",
     services: "Corporate structuring, fundraising documentation, IP, and cross-border deal advisory.",
     email: "partners@savannalegal.ke", image: bSavLegal },
+  { name: "Sahel Strategy Group", category: "Business", city: "Abidjan", country: "Côte d'Ivoire",
+    blurb: "Management consultancy serving francophone enterprise.",
+    services: "Operating model design, transformation programs, and executive advisory across the Sahel.",
+    email: "partners@sahelstrategy.ci", image: bBizConsult },
+  { name: "Baobab Supply Co.", category: "Business", city: "Mombasa", country: "Kenya",
+    blurb: "End-to-end supply chain for African manufacturers.",
+    services: "Procurement, warehousing, customs clearance, and distribution across East Africa.",
+    email: "ops@baobabsupply.ke", image: bBizSupply },
 
   // ============ Automobile (6) ============
   { name: "Sahara Motors", category: "Automobile", city: "Lagos", country: "Nigeria",
