@@ -364,8 +364,14 @@ export const BUSINESSES: Business[] = [
     blurb: "Producer co-op crafting beats for global artists.",
     services: "Production, beat licensing, songwriting camps, and mentorship for emerging producers.",
     email: "studio@afrobeatcollective.com", image: bAfrobeat },
-
-  // ============ Business (6) ============
+  { name: "Dakar Decks", category: "Music", city: "Dakar", country: "Senegal",
+    blurb: "Female-led DJ collective shaping West African nightlife.",
+    services: "DJ residencies, brand activations, festival curation, and mentorship for emerging female DJs.",
+    email: "decks@dakardecks.sn", image: bMusicDakarDJ },
+  { name: "Addis Vinyl Press", category: "Music", city: "Addis Ababa", country: "Ethiopia",
+    blurb: "Boutique vinyl pressing for African independent labels.",
+    services: "Short-run vinyl pressing, sleeve printing, mastering for vinyl, and global fulfillment.",
+    email: "press@addisvinyl.et", image: bMusicVinyl },
   { name: "Mara Logistics", category: "Business", city: "Lagos", country: "Nigeria",
     blurb: "Inland freight infrastructure for fast-moving goods.",
     services: "Long-haul freight, last-mile delivery, fleet leasing, and supply chain analytics across Nigeria and Ghana.",
