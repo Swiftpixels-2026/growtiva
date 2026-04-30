@@ -8,6 +8,7 @@ import Index from "./pages/Index.tsx";
 import Category from "./pages/Category.tsx";
 import Story from "./pages/Story.tsx";
 import DirectoryPage from "./pages/DirectoryPage.tsx";
+import CategoryDirectory from "./pages/CategoryDirectory.tsx";
 import BusinessPage from "./pages/BusinessPage.tsx";
 import IssuePage from "./pages/IssuePage.tsx";
 import Join from "./pages/Join.tsx";
@@ -25,6 +26,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/directory" element={<DirectoryPage />} />
+            <Route path="/directory/:category" element={<CategoryDirectory />} />
             <Route path="/business/:slug" element={<BusinessPage />} />
             <Route path="/issues/:slug" element={<IssuePage />} />
             <Route path="/join" element={<Join />} />
