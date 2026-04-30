@@ -76,6 +76,43 @@ import bRestDakar from "@/assets/biz/rest-dakar-seafood.jpg";
 import bRestAccra from "@/assets/biz/rest-accra-waakye.jpg";
 import bRestCairo from "@/assets/biz/rest-cairo-koshary.jpg";
 
+// Fashion (7 new)
+import bFashLagos from "@/assets/biz/fashion-lagos-atelier.jpg";
+import bFashNairobi from "@/assets/biz/fashion-nairobi-boutique.jpg";
+import bFashCapetown from "@/assets/biz/fashion-capetown-tailor.jpg";
+import bFashMarrakech from "@/assets/biz/fashion-marrakech-kaftan.jpg";
+import bFashDakar from "@/assets/biz/fashion-dakar-streetwear.jpg";
+import bFashJburg from "@/assets/biz/fashion-jburg-bridal.jpg";
+import bFashKigali from "@/assets/biz/fashion-kigali-leather.jpg";
+
+// Coffee (7 new)
+import bCoffAddis from "@/assets/biz/coffee-addis-farm.jpg";
+import bCoffNairobi from "@/assets/biz/coffee-nairobi-cafe.jpg";
+import bCoffLagos from "@/assets/biz/coffee-lagos-roastery.jpg";
+import bCoffKigali from "@/assets/biz/coffee-kigali-coop.jpg";
+import bCoffAccra from "@/assets/biz/coffee-accra-latte.jpg";
+import bCoffMarrakech from "@/assets/biz/coffee-marrakech-brass.jpg";
+import bCoffDar from "@/assets/biz/coffee-dar-cupping.jpg";
+
+// Design (7 new)
+import bDesLagos from "@/assets/biz/design-lagos-brand.jpg";
+import bDesCapetown from "@/assets/biz/design-capetown-interior.jpg";
+import bDesAccra from "@/assets/biz/design-accra-graphic.jpg";
+import bDesKigali from "@/assets/biz/design-kigali-architecture.jpg";
+import bDesMarrakech from "@/assets/biz/design-marrakech-ceramic.jpg";
+import bDesJburg from "@/assets/biz/design-jburg-furniture.jpg";
+import bDesDakar from "@/assets/biz/design-dakar-ux.jpg";
+
+// Education (8 new)
+import bEduLagos from "@/assets/biz/edu-lagos-bootcamp.jpg";
+import bEduNairobi from "@/assets/biz/edu-nairobi-stem.jpg";
+import bEduCapetown from "@/assets/biz/edu-capetown-mba.jpg";
+import bEduAccra from "@/assets/biz/edu-accra-library.jpg";
+import bEduCairo from "@/assets/biz/edu-cairo-university.jpg";
+import bEduKigali from "@/assets/biz/edu-kigali-teachers.jpg";
+import bEduDakar from "@/assets/biz/edu-dakar-edtech.jpg";
+import bEduJburg from "@/assets/biz/edu-jburg-art.jpg";
+
 export type FlipPage =
   | { kind: "image"; src: string; caption?: string }
   | {
