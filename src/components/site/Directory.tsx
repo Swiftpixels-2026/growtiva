@@ -6,7 +6,7 @@ import { BUSINESSES } from "@/data/content";
 import { slugify } from "@/lib/slug";
 import CityMap from "./CityMap";
 
-const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality"];
+const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
 
 const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   const [filter, setFilter] = useState<string>("Technology");

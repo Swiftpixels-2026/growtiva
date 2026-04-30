@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Social from "./Social";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "Issues", href: "/#issues", type: "anchor" as const },
@@ -49,6 +50,7 @@ const Nav = () => {
 
         <div className="hidden md:flex items-center gap-6">
           <Social className="hidden lg:flex text-foreground/70" size={16} />
+          <ThemeToggle />
           <Link
             to="/join"
             className="inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
@@ -57,15 +59,19 @@ const Nav = () => {
           </Link>
         </div>
 
-        <button
-          aria-label="Menu"
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className={`h-px w-6 bg-foreground transition-transform ${open ? "translate-y-[7px] rotate-45" : ""}`} />
-          <span className={`h-px w-6 bg-foreground transition-opacity ${open ? "opacity-0" : ""}`} />
-          <span className={`h-px w-6 bg-foreground transition-transform ${open ? "-translate-y-[7px] -rotate-45" : ""}`} />
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            aria-label="Menu"
+            className="flex flex-col gap-1.5 p-2"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span className={`h-px w-6 bg-foreground transition-transform ${open ? "translate-y-[7px] rotate-45" : ""}`} />
+            <span className={`h-px w-6 bg-foreground transition-opacity ${open ? "opacity-0" : ""}`} />
+            <span className={`h-px w-6 bg-foreground transition-transform ${open ? "-translate-y-[7px] -rotate-45" : ""}`} />
+          </button>
+        </div>
+
       </div>
 
       {open && (
