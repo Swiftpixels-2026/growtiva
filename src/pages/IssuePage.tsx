@@ -21,7 +21,7 @@ const IssuePage = () => {
     return (
       <main className="bg-background text-foreground min-h-screen">
         <Nav />
-        <section className="pt-40 pb-32 max-w-[900px] mx-auto px-6 text-center">
+        <section className="pt-32 md:pt-40 pb-24 md:pb-32 max-w-[900px] mx-auto px-4 sm:px-6 md:px-10 text-center">
           <span className="eyebrow">Not Found</span>
           <h1 className="font-serif text-5xl mt-5">Issue not found</h1>
           <button onClick={() => navigate("/")} className="mt-10 link-underline">
@@ -36,7 +36,7 @@ const IssuePage = () => {
   return (
     <main className="bg-background text-foreground min-h-screen">
       <Nav />
-      <section className="pt-40 pb-32 max-w-[1100px] mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-12 gap-8 md:gap-16 items-start">
+      <section className="pt-32 md:pt-40 pb-20 md:pb-32 max-w-[1100px] mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-12 gap-8 md:gap-16 items-start">
         <div className="col-span-12 md:col-span-5">
           <img src={issue.cover} alt={`${issue.title} cover`} className="w-full h-auto shadow-[0_40px_80px_-20px_rgba(11,11,12,0.25)]" />
         </div>
@@ -46,11 +46,11 @@ const IssuePage = () => {
           <p className="mt-6 text-foreground/75 max-w-lg leading-relaxed">{issue.blurb}</p>
           <p className="mt-3 text-foreground/60">{issue.date}</p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3">
-            <button onClick={() => open(issue.slug)} className="bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors">
+            <button onClick={() => open(issue.slug)} className="bg-foreground text-background px-6 sm:px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors">
               Open Flipbook
             </button>
             {issue.pdfUrl && (
-              <a href={issue.pdfUrl} download className="border border-foreground px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-foreground hover:text-background transition-colors text-center">
+              <a href={issue.pdfUrl} download className="border border-foreground px-6 sm:px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-foreground hover:text-background transition-colors text-center">
                 Download PDF
               </a>
             )}
