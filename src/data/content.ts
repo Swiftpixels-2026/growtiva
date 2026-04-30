@@ -310,6 +310,34 @@ export type Business = {
   phone?: string;
   url?: string;
   image: string;
+  /** Cuisine tags for Restaurant; amenity tags for Hospitality; freeform tags for others. */
+  tags?: string[];
+  /** Approximate coordinates for the city map view. */
+  coords?: { lat: number; lng: number };
+};
+
+/** Approximate coordinates for African cities used by directory listings. */
+export const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
+  "Lagos": { lat: 6.5244, lng: 3.3792 },
+  "Nairobi": { lat: -1.2921, lng: 36.8219 },
+  "Cape Town": { lat: -33.9249, lng: 18.4241 },
+  "Johannesburg": { lat: -26.2041, lng: 28.0473 },
+  "Marrakech": { lat: 31.6295, lng: -7.9811 },
+  "Casablanca": { lat: 33.5731, lng: -7.5898 },
+  "Cairo": { lat: 30.0444, lng: 31.2357 },
+  "Accra": { lat: 5.6037, lng: -0.1870 },
+  "Kigali": { lat: -1.9706, lng: 30.1044 },
+  "Dakar": { lat: 14.7167, lng: -17.4677 },
+  "Addis Ababa": { lat: 9.0320, lng: 38.7469 },
+  "Port Harcourt": { lat: 4.8156, lng: 7.0498 },
+  "Mombasa": { lat: -4.0435, lng: 39.6682 },
+  "Abidjan": { lat: 5.3600, lng: -4.0083 },
+  "Cotonou": { lat: 6.3703, lng: 2.3912 },
+  "Stone Town": { lat: -6.1659, lng: 39.2026 },
+  "Maasai Mara": { lat: -1.5061, lng: 35.1432 },
+  "Kampala": { lat: 0.3476, lng: 32.5825 },
+  "Freetown": { lat: 8.4657, lng: -13.2317 },
+  "Douala": { lat: 4.0511, lng: 9.7679 },
 };
 
 export const BUSINESSES: Business[] = [
