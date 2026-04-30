@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, X } from "lucide-react";
+import { Search, X, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { BUSINESSES } from "@/data/content";
 import { slugify } from "@/lib/slug";
+import CityMap from "./CityMap";
 
 const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality"];
 
 const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   const [filter, setFilter] = useState<string>("Technology");
   const [query, setQuery] = useState("");
+  const [tag, setTag] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "map">("list");
   const [form, setForm] = useState({ name: "", email: "", business: "", category: "", city: "", note: "" });
 
   const otherCategories = useMemo(
@@ -18,23 +21,50 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   );
   const allCategories = [...FEATURED, ...otherCategories];
 
-  const counts = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const b of BUSINESSES) map[b.category] = (map[b.category] ?? 0) + 1;
-    return map;
-  }, []);
-
-  const filtered = useMemo(() => {
-    const base = BUSINESSES.filter((b) => b.category === filter);
+  // Search-aware base set (used to compute live counts per category)
+  const searchMatches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return base;
-    return base.filter(
+    if (!q) return BUSINESSES;
+    return BUSINESSES.filter(
       (b) =>
         b.name.toLowerCase().includes(q) ||
         b.city.toLowerCase().includes(q) ||
-        b.country.toLowerCase().includes(q)
+        b.country.toLowerCase().includes(q) ||
+        (b.tags ?? []).some((t) => t.toLowerCase().includes(q))
     );
-  }, [filter, query]);
+  }, [query]);
+
+  const counts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const b of searchMatches) map[b.category] = (map[b.category] ?? 0) + 1;
+    return map;
+  }, [searchMatches]);
+
+  // Available tags for current category (Restaurant=cuisine, Hospitality=amenities)
+  const tagsForCategory = useMemo(() => {
+    if (filter !== "Restaurant" && filter !== "Hospitality") return [];
+    const set = new Set<string>();
+    for (const b of BUSINESSES) {
+      if (b.category !== filter) continue;
+      (b.tags ?? []).forEach((t) => set.add(t));
+    }
+    return Array.from(set).sort();
+  }, [filter]);
+
+  const tagCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const b of searchMatches) {
+      if (b.category !== filter) continue;
+      (b.tags ?? []).forEach((t) => (map[t] = (map[t] ?? 0) + 1));
+    }
+    return map;
+  }, [searchMatches, filter]);
+
+  const filtered = useMemo(() => {
+    let base = searchMatches.filter((b) => b.category === filter);
+    if (tag) base = base.filter((b) => (b.tags ?? []).includes(tag));
+    return base;
+  }, [filter, tag, searchMatches]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,52 +89,82 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8 mb-10 md:mb-16">
           <div>
             <span className="eyebrow">The Directory</span>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mt-4 md:mt-5 leading-[1.05]">Business Directory</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl mt-4 md:mt-5 leading-[1.05]">Business Directory</h1>
           </div>
           <p className="max-w-md text-foreground/70 text-sm sm:text-base">
             A vetted index of African operators, makers, and studios shaping the modern continent.
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="relative mb-6 md:mb-8 max-w-xl">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, city, or country…"
-            className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-10 py-3 outline-none text-sm placeholder:text-foreground/40 transition-colors"
-            aria-label="Search the directory"
-          />
-          {query && (
+        {/* Search + view toggle */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6 md:mb-8">
+          <div className="relative flex-1 max-w-xl">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name, city, country, or tag…"
+              className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-10 py-3 outline-none text-sm placeholder:text-foreground/40 transition-colors"
+              aria-label="Search the directory"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
+          <div className="inline-flex border border-foreground/20 self-start sm:self-auto">
             <button
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
+              onClick={() => setView("list")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-[10px] tracking-[0.22em] uppercase transition-colors ${
+                view === "list" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+              }`}
+              aria-pressed={view === "list"}
             >
-              <X size={16} />
+              <ListIcon size={14} /> List
             </button>
-          )}
+            <button
+              onClick={() => setView("map")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-[10px] tracking-[0.22em] uppercase transition-colors border-l border-foreground/20 ${
+                view === "map" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+              }`}
+              aria-pressed={view === "map"}
+            >
+              <MapIcon size={14} /> Map
+            </button>
+          </div>
         </div>
 
-        {/* Filters with counts */}
-        <div className="flex flex-wrap gap-2 mb-8 md:mb-12">
+        {/* Category filter chips with live, search-aware counts */}
+        <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
           {allCategories.map((c) => {
             const count = counts[c] ?? 0;
             const active = filter === c;
             return (
               <button
                 key={c}
-                onClick={() => setFilter(c)}
+                onClick={() => {
+                  setFilter(c);
+                  setTag(null);
+                }}
                 className={`inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase px-3 sm:px-4 py-2 border transition-colors ${
                   active
                     ? "border-foreground bg-foreground text-background"
                     : "border-foreground/30 hover:border-foreground"
-                }`}
+                } ${count === 0 && query ? "opacity-50" : ""}`}
               >
                 <span>{c}</span>
-                <span className={`text-[9px] sm:text-[10px] tracking-normal px-1.5 py-0.5 rounded-sm ${active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"}`}>
+                <span
+                  className={`text-[9px] sm:text-[10px] tracking-normal px-1.5 py-0.5 rounded-sm ${
+                    active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
+                  }`}
+                >
                   {count}
                 </span>
               </button>
@@ -112,17 +172,57 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
           })}
         </div>
 
+        {/* Tag chips for Restaurant/Hospitality */}
+        {tagsForCategory.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
+            <span className="text-[10px] tracking-[0.22em] uppercase text-foreground/50 self-center mr-1">
+              {filter === "Restaurant" ? "Cuisine" : "Amenities"}:
+            </span>
+            <button
+              onClick={() => setTag(null)}
+              className={`text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border rounded-full transition-colors ${
+                tag === null
+                  ? "border-accent bg-accent/15 text-foreground"
+                  : "border-foreground/20 hover:border-foreground/60"
+              }`}
+            >
+              All
+            </button>
+            {tagsForCategory.map((t) => {
+              const c = tagCounts[t] ?? 0;
+              const active = tag === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setTag(active ? null : t)}
+                  className={`inline-flex items-center gap-1.5 text-[10px] tracking-[0.18em] uppercase px-3 py-1.5 border rounded-full transition-colors ${
+                    active
+                      ? "border-accent bg-accent/15 text-foreground"
+                      : "border-foreground/20 hover:border-foreground/60"
+                  } ${c === 0 ? "opacity-50" : ""}`}
+                >
+                  <span>{t}</span>
+                  <span className="text-[9px] text-foreground/55">({c})</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         {/* Result count */}
         <div className="mb-4 text-[11px] tracking-[0.22em] uppercase text-foreground/50">
           {filtered.length} {filtered.length === 1 ? "Listing" : "Listings"}
           {query && ` matching “${query}”`}
+          {tag && ` · ${tag}`}
         </div>
 
         {filtered.length === 0 ? (
-          <div className="border border-foreground/15 p-12 text-center">
-            <p className="font-serif text-2xl">No matches found</p>
-            <p className="text-sm text-foreground/60 mt-2">Try a different search term or category.</p>
+          <div className="border border-foreground/15 p-8 sm:p-12 text-center">
+            <p className="font-serif text-xl sm:text-2xl">No matches found</p>
+            <p className="text-sm text-foreground/60 mt-2">Try a different search term, tag, or category.</p>
           </div>
+        ) : view === "map" ? (
+          <CityMap businesses={filtered} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-foreground/15">
             {filtered.map((b) => (
@@ -135,6 +235,18 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                   <span className="eyebrow group-hover:text-background/60">{b.category}</span>
                   <h3 className="font-serif text-xl sm:text-2xl md:text-3xl mt-3 sm:mt-4">{b.name}</h3>
                   <p className="mt-2 sm:mt-3 text-sm opacity-80 max-w-[34ch]">{b.blurb}</p>
+                  {b.tags && b.tags.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {b.tags.slice(0, 3).map((t) => (
+                        <span
+                          key={t}
+                          className="text-[9px] tracking-[0.18em] uppercase px-2 py-0.5 border border-current/30 opacity-70"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="mt-5 sm:mt-6 flex items-center justify-between text-[10px] sm:text-[11px] tracking-[0.22em] uppercase opacity-70">
                   <span className="truncate pr-2">{b.city}, {b.country}</span>
