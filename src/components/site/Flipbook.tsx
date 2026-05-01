@@ -248,14 +248,14 @@ const Flipbook = ({ issue, onClose }: Props) => {
         </HTMLFlipBook>
       </div>
 
-      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-t border-background/10 text-background">
+      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-t border-white/10 text-white">
         <button
           onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
           className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
         >
           <ChevronLeft size={16} /> <span className="hidden sm:inline">Prev</span>
         </button>
-        <span className="text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-background/60">
+        <span className="text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-white/60">
           {Math.min(page + 1, total)} / {total}
         </span>
         <button
