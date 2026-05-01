@@ -35,7 +35,7 @@ const Story = () => {
       <Nav />
 
       {/* Hero */}
-      <section className="pt-36 md:pt-44 pb-16">
+      <section className="pt-28 sm:pt-32 md:pt-40 pb-16">
         <div className="max-w-[900px] mx-auto px-4 sm:px-6 md:px-10 text-center">
           <Link to={`/category/${story.category}`} className="eyebrow link-underline">
             ← {story.category}

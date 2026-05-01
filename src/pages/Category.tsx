@@ -51,7 +51,7 @@ const Category = () => {
   return (
     <main className="bg-background text-foreground">
       <Nav />
-      <section className="pt-36 md:pt-44 pb-16 border-b border-foreground/10">
+      <section className="pt-28 sm:pt-32 md:pt-40 pb-16 border-b border-foreground/10">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
           <Link to="/" className="eyebrow link-underline">← Growtiva</Link>
           <span className="eyebrow block mt-10">{meta.eyebrow}</span>
