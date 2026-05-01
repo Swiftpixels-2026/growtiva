@@ -11,7 +11,7 @@ const Categories = () => {
   return (
     <section id="categories" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
-        <div className="max-w-2xl mb-20">
+        <div className="max-w-2xl mb-12 md:mb-20">
           <span className="eyebrow">Sections</span>
           <h2 className="font-serif text-4xl md:text-6xl mt-5">Inside Growtiva</h2>
         </div>

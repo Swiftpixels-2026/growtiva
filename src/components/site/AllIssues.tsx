@@ -8,7 +8,7 @@ const AllIssues = () => {
   return (
     <section id="issues" className="py-20 sm:py-28 md:py-40 bg-secondary/40 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-12 md:mb-20">
           <div>
             <span className="eyebrow">The Archive</span>
             <h2 className="font-serif text-4xl md:text-6xl mt-5">All Issues</h2>
