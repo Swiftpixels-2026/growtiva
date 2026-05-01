@@ -187,10 +187,10 @@ const Flipbook = ({ issue, onClose }: Props) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-foreground/95 backdrop-blur-sm flex flex-col animate-fade-up">
-      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-b border-background/10 text-background gap-2">
+    <div className="fixed inset-0 z-[100] bg-[#0b0b0c]/97 backdrop-blur-sm flex flex-col animate-fade-up">
+      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-b border-white/10 text-white gap-2">
         <div className="flex flex-col leading-tight min-w-0 flex-1">
-          <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-background/60 truncate">
+          <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-white/60 truncate">
             Issue {issue.number} · {issue.volume}
           </span>
           <span className="font-serif text-sm sm:text-base md:text-lg truncate">{issue.title}</span>
@@ -199,7 +199,7 @@ const Flipbook = ({ issue, onClose }: Props) => {
           <button
             onClick={share}
             aria-label="Share"
-            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 p-2 sm:px-4 sm:py-2 hover:bg-background hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/40 p-2 sm:px-4 sm:py-2 hover:bg-white hover:text-[#0b0b0c] transition-colors"
           >
             <Share2 size={14} /> <span className="hidden sm:inline">Share</span>
           </button>
@@ -208,12 +208,12 @@ const Flipbook = ({ issue, onClose }: Props) => {
               href={issue.pdfUrl}
               download
               aria-label="Download PDF"
-              className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-background/40 p-2 sm:px-4 sm:py-2 hover:bg-background hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/40 p-2 sm:px-4 sm:py-2 hover:bg-white hover:text-[#0b0b0c] transition-colors"
             >
               <Download size={14} /> <span className="hidden sm:inline">PDF</span>
             </a>
           )}
-          <button onClick={onClose} aria-label="Close flipbook" className="p-2 hover:text-accent transition-colors">
+          <button onClick={onClose} aria-label="Close flipbook" className="p-2 text-white hover:text-accent transition-colors">
             <X size={20} />
           </button>
         </div>
