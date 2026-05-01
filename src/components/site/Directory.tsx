@@ -96,80 +96,84 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
           </p>
         </div>
 
-        {/* Search + view toggle */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6 md:mb-8">
-          <div className="relative flex-1 max-w-xl">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, city, country, or tag…"
-              className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-10 py-3 outline-none text-sm placeholder:text-foreground/40 transition-colors"
-              aria-label="Search the directory"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                aria-label="Clear search"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-
-          <div className="inline-flex border border-foreground/20 self-start sm:self-auto">
-            <button
-              onClick={() => setView("list")}
-              className={`inline-flex items-center gap-2 px-4 py-3 text-[10px] tracking-[0.22em] uppercase transition-colors ${
-                view === "list" ? "bg-foreground text-background" : "hover:bg-foreground/5"
-              }`}
-              aria-pressed={view === "list"}
-            >
-              <ListIcon size={14} /> List
-            </button>
-            <button
-              onClick={() => setView("map")}
-              className={`inline-flex items-center gap-2 px-4 py-3 text-[10px] tracking-[0.22em] uppercase transition-colors border-l border-foreground/20 ${
-                view === "map" ? "bg-foreground text-background" : "hover:bg-foreground/5"
-              }`}
-              aria-pressed={view === "map"}
-            >
-              <MapIcon size={14} /> Map
-            </button>
-          </div>
-        </div>
-
-        {/* Category filter chips with live, search-aware counts */}
-        <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-          {allCategories.map((c) => {
-            const count = counts[c] ?? 0;
-            const active = filter === c;
-            return (
-              <button
-                key={c}
-                onClick={() => {
-                  setFilter(c);
-                  setTag(null);
-                }}
-                className={`inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase px-3 sm:px-4 py-2 border transition-colors ${
-                  active
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-foreground/30 hover:border-foreground"
-                } ${count === 0 && query ? "opacity-50" : ""}`}
-              >
-                <span>{c}</span>
-                <span
-                  className={`text-[9px] sm:text-[10px] tracking-normal px-1.5 py-0.5 rounded-sm ${
-                    active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
-                  }`}
+        {/* Sticky filter bar (search + view toggle + categories) */}
+        <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 mb-5 md:mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 max-w-xl">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search name, city, or tag…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-10 py-2.5 sm:py-3 outline-none text-sm placeholder:text-foreground/40 transition-colors"
+                aria-label="Search the directory"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground"
                 >
-                  {count}
-                </span>
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            <div className="inline-flex border border-foreground/20 self-start sm:self-auto">
+              <button
+                onClick={() => setView("list")}
+                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] tracking-[0.22em] uppercase transition-colors ${
+                  view === "list" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+                }`}
+                aria-pressed={view === "list"}
+              >
+                <ListIcon size={14} /> List
               </button>
-            );
-          })}
+              <button
+                onClick={() => setView("map")}
+                className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] tracking-[0.22em] uppercase transition-colors border-l border-foreground/20 ${
+                  view === "map" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+                }`}
+                aria-pressed={view === "map"}
+              >
+                <MapIcon size={14} /> Map
+              </button>
+            </div>
+          </div>
+
+          {/* Category filter chips — horizontal scroll on mobile, wrap on desktop */}
+          <div className="mt-3 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar">
+            <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+              {allCategories.map((c) => {
+                const count = counts[c] ?? 0;
+                const active = filter === c;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => {
+                      setFilter(c);
+                      setTag(null);
+                    }}
+                    className={`shrink-0 inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase whitespace-nowrap px-3 sm:px-4 py-2 border transition-colors ${
+                      active
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-foreground/30 hover:border-foreground"
+                    } ${count === 0 && query ? "opacity-50" : ""}`}
+                  >
+                    <span>{c}</span>
+                    <span
+                      className={`text-[9px] sm:text-[10px] tracking-normal px-1.5 py-0.5 rounded-sm ${
+                        active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
         {/* Tag chips for Restaurant/Hospitality */}
