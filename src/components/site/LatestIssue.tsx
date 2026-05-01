@@ -10,7 +10,7 @@ const LatestIssue = () => {
   const handleDownload = () => downloadIssuePdf(issue01);
 
   return (
-    <section id="latest" className="py-32 md:py-48 border-t border-foreground/10">
+    <section id="latest" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-6 order-2 lg:order-1">

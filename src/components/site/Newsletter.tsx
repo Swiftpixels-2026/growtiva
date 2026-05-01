@@ -41,7 +41,7 @@ const Newsletter = () => {
   };
 
   return (
-    <section id="newsletter" className="py-32 md:py-48 bg-foreground text-background">
+    <section id="newsletter" className="py-20 sm:py-28 md:py-40 bg-foreground text-background">
       <div className="max-w-[900px] mx-auto px-4 sm:px-6 md:px-10 text-center">
         {submittedEmail ? (
           <div className="animate-fade-up">

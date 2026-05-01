@@ -40,7 +40,7 @@ const Category = () => {
     return (
       <main className="bg-background text-foreground min-h-screen">
         <Nav />
-        <div className="max-w-[800px] mx-auto px-4 sm:px-6 md:px-10 py-32 md:py-48 text-center">
+        <div className="max-w-[800px] mx-auto px-4 sm:px-6 md:px-10 py-20 sm:py-28 md:py-40 text-center">
           <h1 className="font-serif text-5xl">Section not found</h1>
           <Link to="/" className="link-underline mt-8 inline-block">Return home</Link>
         </div>
