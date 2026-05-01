@@ -170,31 +170,33 @@ const CategoryDirectory = () => {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {countries.map((c) => {
-                const count = c === "All" ? all.length : all.filter((b) => b.country === c).length;
-                const active = country === c;
-                return (
-                  <button
-                    key={c}
-                    onClick={() => setCountry(c)}
-                    className={`inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase px-3 py-2 border transition-colors ${
-                      active
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-foreground/30 hover:border-foreground"
-                    }`}
-                  >
-                    <span>{c}</span>
-                    <span
-                      className={`text-[9px] tracking-normal px-1.5 py-0.5 rounded-sm ${
-                        active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
+            <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar">
+              <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+                {countries.map((c) => {
+                  const count = c === "All" ? all.length : all.filter((b) => b.country === c).length;
+                  const active = country === c;
+                  return (
+                    <button
+                      key={c}
+                      onClick={() => setCountry(c)}
+                      className={`shrink-0 inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-[0.22em] uppercase whitespace-nowrap px-3 py-2 border transition-colors ${
+                        active
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-foreground/30 hover:border-foreground"
                       }`}
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+                      <span>{c}</span>
+                      <span
+                        className={`text-[9px] tracking-normal px-1.5 py-0.5 rounded-sm ${
+                          active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 

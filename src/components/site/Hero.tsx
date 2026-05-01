@@ -93,12 +93,12 @@ const Hero = () => {
                     width={1024}
                     height={1280}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/55 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 </div>
               ))}
 
-              <div className="absolute left-3 sm:left-4 bottom-3 sm:bottom-4 right-3 sm:right-4 text-background">
-                <div className="text-[10px] tracking-[0.3em] uppercase text-background/70">Across Africa</div>
+              <div className="absolute left-3 sm:left-4 bottom-3 sm:bottom-4 right-3 sm:right-4 text-white">
+                <div className="text-[10px] tracking-[0.3em] uppercase text-white/70">Across Africa</div>
                 <div className="font-serif text-base md:text-xl mt-1 leading-tight">
                   {COUNTRY_SLIDES[i].place},
                   <br />
@@ -111,7 +111,7 @@ const Hero = () => {
                       onClick={() => setI(idx)}
                       aria-label={`Show ${COUNTRY_SLIDES[idx].country}`}
                       className={`h-px transition-all ${
-                        idx === i ? "w-6 bg-background" : "w-3 bg-background/40"
+                        idx === i ? "w-6 bg-white" : "w-3 bg-white/40"
                       }`}
                     />
                   ))}

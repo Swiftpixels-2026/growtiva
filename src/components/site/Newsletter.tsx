@@ -41,7 +41,7 @@ const Newsletter = () => {
   };
 
   return (
-    <section id="newsletter" className="py-32 md:py-48 bg-foreground text-background">
+    <section id="newsletter" className="py-20 sm:py-28 md:py-40 bg-[#0b0b0c] text-white">
       <div className="max-w-[900px] mx-auto px-4 sm:px-6 md:px-10 text-center">
         {submittedEmail ? (
           <div className="animate-fade-up">
@@ -49,14 +49,14 @@ const Newsletter = () => {
             <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl mt-6 leading-[1.02]">
               Welcome to the <span className="italic text-accent">Inner Circle</span>
             </h2>
-            <p className="mt-8 text-background/70 max-w-xl mx-auto">
-              We've added <span className="text-background">{submittedEmail}</span> to the list.
+            <p className="mt-8 text-white/70 max-w-xl mx-auto">
+              We've added <span className="text-white">{submittedEmail}</span> to the list.
               The next edition will land in your inbox first.
             </p>
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-[12px] tracking-[0.22em] uppercase">
               <button
                 onClick={unsubscribe}
-                className="border border-background/40 px-6 py-3 hover:bg-background hover:text-foreground transition-colors"
+                className="border border-white/40 px-6 py-3 hover:bg-white hover:text-[#0b0b0c] transition-colors"
               >
                 Unsubscribe
               </button>
@@ -70,16 +70,16 @@ const Newsletter = () => {
           </div>
         ) : (
           <>
-            <span className="text-[10px] tracking-[0.3em] uppercase text-background/60">Newsletter</span>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-white/60">Newsletter</span>
             <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl mt-6 leading-[1.02]">
               Get each issue <span className="italic text-accent">first</span>
             </h2>
-            <p className="mt-8 text-background/70 max-w-xl mx-auto">
+            <p className="mt-8 text-white/70 max-w-xl mx-auto">
               Be the first to access new editions, curated stories, and opportunities.
               No noise. Just signal.
             </p>
 
-            <form onSubmit={submit} className="mt-14 max-w-xl mx-auto flex flex-col sm:flex-row gap-3 sm:gap-0 border-b border-background/30 pb-2">
+            <form onSubmit={submit} className="mt-14 max-w-xl mx-auto flex flex-col sm:flex-row gap-3 sm:gap-0 border-b border-white/30 pb-2">
               <input
                 type="email"
                 required
@@ -87,7 +87,7 @@ const Newsletter = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 bg-transparent text-background placeholder:text-background/40 px-2 py-3 text-base outline-none"
+                className="flex-1 bg-transparent text-white placeholder:text-white/40 px-2 py-3 text-base outline-none"
               />
               <button
                 type="submit"
