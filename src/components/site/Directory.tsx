@@ -178,8 +178,8 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
         {/* Tag chips for Restaurant/Hospitality */}
         {tagsForCategory.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
-            <span className="text-[10px] tracking-[0.22em] uppercase text-foreground/50 self-center mr-1">
+          <div className="flex flex-wrap items-center gap-2 mb-6 md:mb-8">
+            <span className="text-[10px] tracking-[0.22em] uppercase text-foreground/50 mr-1 shrink-0">
               {filter === "Restaurant" ? "Cuisine" : "Amenities"}:
             </span>
             <button
