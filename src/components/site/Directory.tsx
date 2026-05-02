@@ -97,7 +97,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         </div>
 
         {/* Sticky filter bar (search + view toggle + categories) */}
-        <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 mb-5 md:mb-6">
+        <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.15)] mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 max-w-xl">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
