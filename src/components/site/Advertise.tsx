@@ -39,6 +39,7 @@ const Advertise = () => {
   const [form, setForm] = useState<FormState>(empty);
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState<FormState | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
