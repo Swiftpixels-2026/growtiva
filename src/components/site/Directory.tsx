@@ -144,7 +144,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
           {/* Category filter chips — horizontal scroll on mobile, wrap on desktop */}
           <div className="mt-3 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar">
-            <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+            <div className="flex sm:flex-wrap gap-2 sm:gap-2.5 min-w-max sm:min-w-0 pr-4 sm:pr-0">
               {allCategories.map((c) => {
                 const count = counts[c] ?? 0;
                 const active = filter === c;
