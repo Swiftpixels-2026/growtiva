@@ -244,7 +244,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                       {b.tags.slice(0, 3).map((t) => (
                         <span
                           key={t}
-                          className="text-[9px] tracking-[0.18em] uppercase px-2 py-0.5 border border-current/30 opacity-70"
+                          className="text-[9px] tracking-[0.18em] uppercase px-2 py-0.5 border border-current opacity-60"
                         >
                           {t}
                         </span>
