@@ -245,6 +245,8 @@ const Advertise = () => {
             )}
           </div>
         </div>
+          </div>
+        </div>
       </div>
     </section>
   );
