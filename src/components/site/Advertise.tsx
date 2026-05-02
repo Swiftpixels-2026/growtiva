@@ -62,7 +62,7 @@ const Advertise = () => {
   };
 
   return (
-    <section id="advertise" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
+    <section id="advertise" className="py-14 sm:py-20 md:py-28 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <button
           type="button"
