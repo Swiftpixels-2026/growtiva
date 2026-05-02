@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ChevronDown } from "lucide-react";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -38,6 +39,7 @@ const Advertise = () => {
   const [form, setForm] = useState<FormState>(empty);
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState<FormState | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,8 +62,39 @@ const Advertise = () => {
   };
 
   return (
-    <section id="advertise" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
+    <section id="advertise" className="py-14 sm:py-20 md:py-28 border-t border-foreground/10">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls="advertise-panel"
+          className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 text-left group"
+        >
+          <div>
+            <span className="eyebrow">Partnerships</span>
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl mt-3 leading-[1.05]">
+              Advertise with <span className="italic text-accent">Growtiva</span>
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-foreground/70 max-w-xl">
+              Reach a focused audience of ambitious, culturally aware Africans.
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-foreground/30 group-hover:border-foreground px-4 py-2.5 shrink-0 transition-colors">
+            {expanded ? "Hide details" : "View rates & request media kit"}
+            <ChevronDown size={14} className={`transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
+          </span>
+        </button>
+
+        <div
+          id="advertise-panel"
+          className={`grid transition-all duration-500 ease-out overflow-hidden ${
+            expanded ? "opacity-100 mt-12 md:mt-16" : "opacity-0 mt-0"
+          }`}
+          style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
+          aria-hidden={!expanded}
+        >
+          <div className="min-h-0 overflow-hidden">
         <div className="grid grid-cols-12 gap-8 md:gap-16">
           <div className="col-span-12 lg:col-span-5">
             <span className="eyebrow">Partnerships</span>
@@ -210,6 +243,8 @@ const Advertise = () => {
                 </button>
               </form>
             )}
+          </div>
+        </div>
           </div>
         </div>
       </div>

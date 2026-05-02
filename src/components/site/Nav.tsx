@@ -48,12 +48,12 @@ const Nav = () => {
           {links.map((l) => renderLink(l, undefined, "text-[13px] tracking-wide link-underline"))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-6">
-          <Social className="hidden lg:flex text-foreground/70" size={16} />
+        <div className="hidden md:flex items-center gap-4 lg:gap-5">
+          <Social className="hidden lg:flex text-foreground/70 mr-2" size={16} />
           <ThemeToggle />
           <Link
             to="/join"
-            className="inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
+            className="ml-2 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
           >
             Inner Circle
           </Link>

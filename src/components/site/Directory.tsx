@@ -97,7 +97,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         </div>
 
         {/* Sticky filter bar (search + view toggle + categories) */}
-        <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 mb-5 md:mb-6">
+        <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.15)] mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 max-w-xl">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
@@ -144,7 +144,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
           {/* Category filter chips — horizontal scroll on mobile, wrap on desktop */}
           <div className="mt-3 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar">
-            <div className="flex sm:flex-wrap gap-2 min-w-max sm:min-w-0">
+            <div className="flex sm:flex-wrap gap-2 sm:gap-2.5 min-w-max sm:min-w-0 pr-4 sm:pr-0">
               {allCategories.map((c) => {
                 const count = counts[c] ?? 0;
                 const active = filter === c;
@@ -178,8 +178,8 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
         {/* Tag chips for Restaurant/Hospitality */}
         {tagsForCategory.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
-            <span className="text-[10px] tracking-[0.22em] uppercase text-foreground/50 self-center mr-1">
+          <div className="flex flex-wrap items-center gap-2 mb-6 md:mb-8">
+            <span className="text-[10px] tracking-[0.22em] uppercase text-foreground/50 mr-1 shrink-0">
               {filter === "Restaurant" ? "Cuisine" : "Amenities"}:
             </span>
             <button
@@ -244,7 +244,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                       {b.tags.slice(0, 3).map((t) => (
                         <span
                           key={t}
-                          className="text-[9px] tracking-[0.18em] uppercase px-2 py-0.5 border border-current/30 opacity-70"
+                          className="text-[9px] tracking-[0.18em] uppercase px-2 py-0.5 border border-current opacity-60"
                         >
                           {t}
                         </span>
