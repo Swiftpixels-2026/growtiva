@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ChevronDown } from "lucide-react";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
