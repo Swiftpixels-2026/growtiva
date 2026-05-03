@@ -122,8 +122,8 @@ const Flipbook = ({ issue, onClose }: Props) => {
       const vh = window.innerHeight;
       const mobile = vw < 768;
       setIsMobile(mobile);
-      // Reserve space for header + footer + minimal padding
-      const chromeH = (mobile ? 56 + 56 : 64 + 64) + 16;
+      // Minimal chrome — slim header + slim footer
+      const chromeH = mobile ? 52 + 48 + 8 : 56 + 48 + 8;
       const maxH = vh - chromeH;
       const ratio = 1.4; // page aspect h/w
 
@@ -131,16 +131,15 @@ const Flipbook = ({ issue, onClose }: Props) => {
       let pageH: number;
 
       if (mobile) {
-        // Single page shown — fill width
-        pageW = Math.min(vw - 16, 560);
+        pageW = Math.min(vw - 8, 640);
         pageH = pageW * ratio;
         if (pageH > maxH) {
           pageH = maxH;
           pageW = pageH / ratio;
         }
       } else {
-        // Desktop: fill nearly the full viewport width
-        const maxSpreadW = Math.min(vw * 0.99, 1800);
+        // Desktop: full-bleed — use entire viewport width
+        const maxSpreadW = Math.min(vw - 8, 2400);
         pageW = maxSpreadW / 2;
         pageH = pageW * ratio;
         if (pageH > maxH) {
@@ -177,30 +176,47 @@ const Flipbook = ({ issue, onClose }: Props) => {
     const url = `${window.location.origin}/issues/${issue.slug}`;
     const data = { title: `Growtiva Africa — Issue ${issue.number}`, text: issue.title, url };
     try {
-      if (navigator.share) await navigator.share(data);
-      else {
+      if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        await navigator.share(data);
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      toast.success("Issue link copied to clipboard.");
+    } catch (err: any) {
+      if (err?.name === "AbortError") return;
+      try {
         await navigator.clipboard.writeText(url);
         toast.success("Issue link copied to clipboard.");
+      } catch {
+        toast.error("Could not share. Copy the URL from your browser bar.");
       }
-    } catch {
-      /* user cancelled */
     }
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#0b0b0c]/97 backdrop-blur-sm flex flex-col animate-fade-up">
-      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-b border-white/10 text-white gap-2">
-        <div className="flex flex-col leading-tight min-w-0 flex-1">
-          <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-white/60 truncate">
-            Issue {issue.number} · {issue.volume}
-          </span>
-          <span className="font-serif text-sm sm:text-base md:text-lg truncate">{issue.title}</span>
+    <div className="fixed inset-0 z-[100] bg-[#0b0b0c] flex flex-col animate-fade-up">
+      {/* Slim, high-contrast top bar */}
+      <div className="flex items-center justify-between px-3 sm:px-5 md:px-6 h-[52px] md:h-14 bg-[#0b0b0c] border-b border-white/15 text-white gap-2 shrink-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <button
+            onClick={onClose}
+            aria-label="Close magazine and return"
+            className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.22em] uppercase border border-white/50 text-white px-3 py-1.5 hover:bg-white hover:text-[#0b0b0c] transition-colors shrink-0"
+          >
+            <ChevronLeft size={14} /> <span className="hidden sm:inline">Back</span>
+          </button>
+          <div className="flex flex-col leading-tight min-w-0">
+            <span className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-white/70 truncate">
+              Issue {issue.number} · {issue.volume}
+            </span>
+            <span className="font-serif text-sm md:text-base text-white truncate">{issue.title}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1 sm:gap-2 md:gap-4 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             onClick={share}
-            aria-label="Share"
-            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/40 p-2 sm:px-4 sm:py-2 hover:bg-white hover:text-[#0b0b0c] transition-colors"
+            aria-label="Share issue"
+            className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/50 text-white p-2 sm:px-3 sm:py-1.5 hover:bg-white hover:text-[#0b0b0c] transition-colors"
           >
             <Share2 size={14} /> <span className="hidden sm:inline">Share</span>
           </button>
@@ -209,18 +225,22 @@ const Flipbook = ({ issue, onClose }: Props) => {
               href={issue.pdfUrl}
               download
               aria-label="Download PDF"
-              className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/40 p-2 sm:px-4 sm:py-2 hover:bg-white hover:text-[#0b0b0c] transition-colors"
+              className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/50 text-white p-2 sm:px-3 sm:py-1.5 hover:bg-white hover:text-[#0b0b0c] transition-colors"
             >
               <Download size={14} /> <span className="hidden sm:inline">PDF</span>
             </a>
           )}
-          <button onClick={onClose} aria-label="Close flipbook" className="p-2 text-white hover:text-accent transition-colors">
-            <X size={20} />
+          <button
+            onClick={onClose}
+            aria-label="Close flipbook"
+            className="inline-flex items-center justify-center p-2 text-white bg-white/10 hover:bg-accent hover:text-[#0b0b0c] transition-colors border border-white/30"
+          >
+            <X size={18} />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-1 sm:px-2 py-2 md:py-3 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-1 py-1 md:py-2 overflow-hidden">
         {/* @ts-expect-error - react-pageflip types are loose */}
         <HTMLFlipBook
           key={isMobile ? "m" : "d"}
@@ -229,9 +249,9 @@ const Flipbook = ({ issue, onClose }: Props) => {
           height={size.h}
           size="fixed"
           minWidth={260}
-          maxWidth={1100}
+          maxWidth={1400}
           minHeight={350}
-          maxHeight={1500}
+          maxHeight={1900}
           drawShadow
           showCover
           mobileScrollSupport
@@ -249,19 +269,21 @@ const Flipbook = ({ issue, onClose }: Props) => {
         </HTMLFlipBook>
       </div>
 
-      <div className="flex items-center justify-between px-3 sm:px-6 md:px-10 h-14 sm:h-16 border-t border-white/10 text-white">
+      <div className="flex items-center justify-between px-3 sm:px-6 md:px-8 h-12 bg-[#0b0b0c] border-t border-white/15 text-white shrink-0">
         <button
           onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
-          className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
+          aria-label="Previous page"
+          className="flex items-center gap-1.5 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase text-white hover:text-accent transition-colors"
         >
           <ChevronLeft size={16} /> <span className="hidden sm:inline">Prev</span>
         </button>
-        <span className="text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-white/60">
+        <span className="text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-white/80">
           {Math.min(page + 1, total)} / {total}
         </span>
         <button
           onClick={() => bookRef.current?.pageFlip()?.flipNext()}
-          className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase hover:text-accent transition-colors"
+          aria-label="Next page"
+          className="flex items-center gap-1.5 text-[10px] sm:text-[12px] tracking-[0.22em] uppercase text-white hover:text-accent transition-colors"
         >
           <span className="hidden sm:inline">Next</span> <ChevronRight size={16} />
         </button>
