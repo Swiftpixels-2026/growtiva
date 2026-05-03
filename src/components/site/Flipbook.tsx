@@ -229,9 +229,9 @@ const Flipbook = ({ issue, onClose }: Props) => {
           height={size.h}
           size="fixed"
           minWidth={260}
-          maxWidth={760}
+          maxWidth={1100}
           minHeight={350}
-          maxHeight={1000}
+          maxHeight={1500}
           drawShadow
           showCover
           mobileScrollSupport
