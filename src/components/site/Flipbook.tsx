@@ -220,7 +220,7 @@ const Flipbook = ({ issue, onClose }: Props) => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 py-3 md:py-6 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-1 sm:px-2 py-2 md:py-3 overflow-hidden">
         {/* @ts-expect-error - react-pageflip types are loose */}
         <HTMLFlipBook
           key={isMobile ? "m" : "d"}
