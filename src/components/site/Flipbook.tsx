@@ -122,8 +122,8 @@ const Flipbook = ({ issue, onClose }: Props) => {
       const vh = window.innerHeight;
       const mobile = vw < 768;
       setIsMobile(mobile);
-      // Reserve space for header + footer + minimal padding
-      const chromeH = (mobile ? 56 + 56 : 64 + 64) + 16;
+      // Minimal chrome — slim header + slim footer
+      const chromeH = mobile ? 52 + 48 + 8 : 56 + 48 + 8;
       const maxH = vh - chromeH;
       const ratio = 1.4; // page aspect h/w
 
@@ -131,16 +131,15 @@ const Flipbook = ({ issue, onClose }: Props) => {
       let pageH: number;
 
       if (mobile) {
-        // Single page shown — fill width
-        pageW = Math.min(vw - 16, 560);
+        pageW = Math.min(vw - 8, 640);
         pageH = pageW * ratio;
         if (pageH > maxH) {
           pageH = maxH;
           pageW = pageH / ratio;
         }
       } else {
-        // Desktop: fill nearly the full viewport width
-        const maxSpreadW = Math.min(vw * 0.99, 1800);
+        // Desktop: full-bleed — use entire viewport width
+        const maxSpreadW = Math.min(vw - 8, 2400);
         pageW = maxSpreadW / 2;
         pageH = pageW * ratio;
         if (pageH > maxH) {
