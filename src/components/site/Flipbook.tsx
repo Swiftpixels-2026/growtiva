@@ -122,8 +122,8 @@ const Flipbook = ({ issue, onClose }: Props) => {
       const vh = window.innerHeight;
       const mobile = vw < 768;
       setIsMobile(mobile);
-      // Reserve space for header (~56) + footer (~56) + padding
-      const chromeH = 56 + 56 + 24;
+      // Reserve space for header + footer + minimal padding
+      const chromeH = (mobile ? 56 + 56 : 64 + 64) + 16;
       const maxH = vh - chromeH;
       const ratio = 1.4; // page aspect h/w
 
@@ -132,14 +132,15 @@ const Flipbook = ({ issue, onClose }: Props) => {
 
       if (mobile) {
         // Single page shown — fill width
-        pageW = Math.min(vw - 24, 520);
+        pageW = Math.min(vw - 16, 560);
         pageH = pageW * ratio;
         if (pageH > maxH) {
           pageH = maxH;
           pageW = pageH / ratio;
         }
       } else {
-        const maxSpreadW = Math.min(vw * 0.94, 1180);
+        // Desktop: fill nearly the full viewport width
+        const maxSpreadW = Math.min(vw * 0.99, 1800);
         pageW = maxSpreadW / 2;
         pageH = pageW * ratio;
         if (pageH > maxH) {
@@ -219,7 +220,7 @@ const Flipbook = ({ issue, onClose }: Props) => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 py-3 md:py-6 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center px-1 sm:px-2 py-2 md:py-3 overflow-hidden">
         {/* @ts-expect-error - react-pageflip types are loose */}
         <HTMLFlipBook
           key={isMobile ? "m" : "d"}
@@ -228,9 +229,9 @@ const Flipbook = ({ issue, onClose }: Props) => {
           height={size.h}
           size="fixed"
           minWidth={260}
-          maxWidth={760}
+          maxWidth={1100}
           minHeight={350}
-          maxHeight={1000}
+          maxHeight={1500}
           drawShadow
           showCover
           mobileScrollSupport
