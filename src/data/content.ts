@@ -256,10 +256,64 @@ export type Story = {
   title: string;
   dek: string;
   author: string;
+  authorSlug?: string;
   readTime: string;
+  publishedAt?: string;
   cover: string;
+  coverCredit?: string;
   paragraphs: string[];
+  pullQuote?: { text: string; attribution?: string };
+  sidenote?: { label: string; body: string };
+  tags?: string[];
+  issueSlug?: string;
+  relatedSlugs?: string[];
 };
+
+export type Author = {
+  slug: string;
+  name: string;
+  role: string;
+  bio: string;
+  portrait: string;
+  city?: string;
+  twitter?: string;
+};
+
+export const AUTHORS: Author[] = [
+  {
+    slug: "ada-okonkwo",
+    name: "Ada Okonkwo",
+    role: "Contributing Editor, Business",
+    city: "Lagos, Nigeria",
+    bio: "Ada writes about the operators, supply chains, and capital flows reshaping West African commerce. Before Growtiva, she covered private markets at a pan-African research firm.",
+    portrait: portrait,
+    twitter: "ada_okonkwo",
+  },
+  {
+    slug: "lerato-mokoena",
+    name: "Lerato Mokoena",
+    role: "Lifestyle Editor",
+    city: "Cape Town, South Africa",
+    bio: "Lerato reports on style, design, and the texture of how a new African professional class lives. Her interviews have appeared in publications across Johannesburg, London, and Lagos.",
+    portrait: portrait,
+  },
+  {
+    slug: "kwame-boateng",
+    name: "Kwame Boateng",
+    role: "Culture Correspondent",
+    city: "Accra, Ghana",
+    bio: "Kwame writes essays on music, language, and the moving canon of contemporary African culture. He is the author of two collections of cultural criticism.",
+    portrait: portrait,
+  },
+  {
+    slug: "ifeoma-nwachukwu",
+    name: "Ifeoma Nwachukwu",
+    role: "Money Editor",
+    city: "Nairobi, Kenya",
+    bio: "Ifeoma covers personal finance, capital, and the economics of staying. A former equity analyst, she translates spreadsheets into questions worth asking.",
+    portrait: portrait,
+  },
+];
 
 export const STORIES: Story[] = [
   {
