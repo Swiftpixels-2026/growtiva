@@ -5,6 +5,7 @@ import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "Issues", href: "/#issues", type: "anchor" as const },
+  { label: "Archive", href: "/archive", type: "route" as const },
   { label: "Categories", href: "/#categories", type: "anchor" as const },
   { label: "Directory", href: "/directory", type: "route" as const },
   { label: "Community", href: "/#community", type: "anchor" as const },
