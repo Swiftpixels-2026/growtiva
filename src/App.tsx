@@ -12,6 +12,8 @@ import CategoryDirectory from "./pages/CategoryDirectory.tsx";
 import BusinessPage from "./pages/BusinessPage.tsx";
 import IssuePage from "./pages/IssuePage.tsx";
 import Join from "./pages/Join.tsx";
+import Author from "./pages/Author.tsx";
+import Archive from "./pages/Archive.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/directory/:category" element={<CategoryDirectory />} />
             <Route path="/business/:slug" element={<BusinessPage />} />
             <Route path="/issues/:slug" element={<IssuePage />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/author/:slug" element={<Author />} />
             <Route path="/join" element={<Join />} />
             <Route path="/category/:slug" element={<Category />} />
             <Route path="/story/:slug" element={<Story />} />
