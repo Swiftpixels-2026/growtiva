@@ -267,6 +267,7 @@ export type Story = {
   tags?: string[];
   issueSlug?: string;
   relatedSlugs?: string[];
+  audioUrl?: string;
 };
 
 export type Author = {

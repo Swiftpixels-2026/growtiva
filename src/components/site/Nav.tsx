@@ -2,19 +2,25 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Social from "./Social";
 import ThemeToggle from "./ThemeToggle";
+import { LanguageToggle, useI18n } from "@/lib/i18n";
 
-const links = [
-  { label: "Issues", href: "/#issues", type: "anchor" as const },
-  { label: "Archive", href: "/archive", type: "route" as const },
-  { label: "Categories", href: "/#categories", type: "anchor" as const },
-  { label: "Directory", href: "/directory", type: "route" as const },
-  { label: "Community", href: "/#community", type: "anchor" as const },
-  { label: "Advertise", href: "/#advertise", type: "anchor" as const },
-];
+const useLinks = () => {
+  const { t } = useI18n();
+  return [
+    { label: t("nav.issues"), href: "/#issues", type: "anchor" as const },
+    { label: t("nav.archive"), href: "/archive", type: "route" as const },
+    { label: t("nav.directory"), href: "/directory", type: "route" as const },
+    { label: t("nav.events"), href: "/events", type: "route" as const },
+    { label: t("nav.letters"), href: "/letters", type: "route" as const },
+    { label: t("nav.advertise"), href: "/#advertise", type: "anchor" as const },
+  ];
+};
 
 const Nav = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const links = useLinks();
+  const { t } = useI18n();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -23,7 +29,7 @@ const Nav = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const renderLink = (l: typeof links[number], onClick?: () => void, className?: string) =>
+  const renderLink = (l: ReturnType<typeof useLinks>[number], onClick?: () => void, className?: string) =>
     l.type === "route" ? (
       <Link key={l.href} to={l.href} onClick={onClick} className={className}>
         {l.label}
@@ -45,22 +51,24 @@ const Nav = () => {
           Growtiva <span className="italic text-accent">Africa</span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-7">
           {links.map((l) => renderLink(l, undefined, "text-[13px] tracking-wide link-underline"))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-4 lg:gap-5">
-          <Social className="hidden lg:flex text-foreground/70 mr-2" size={16} />
+        <div className="hidden md:flex items-center gap-3 lg:gap-4">
+          <Social className="hidden xl:flex text-foreground/70" size={16} />
+          <LanguageToggle compact />
           <ThemeToggle />
           <Link
             to="/join"
-            className="ml-2 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-5 py-2.5 hover:bg-foreground hover:text-background transition-colors"
+            className="ml-1 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] uppercase border border-foreground px-4 py-2.5 hover:bg-foreground hover:text-background transition-colors whitespace-nowrap"
           >
-            Inner Circle
+            {t("nav.innerCircle")}
           </Link>
         </div>
 
         <div className="md:hidden flex items-center gap-2">
+          <LanguageToggle compact />
           <ThemeToggle />
           <button
             aria-label="Menu"
