@@ -116,6 +116,21 @@ const Story = () => {
         </figure>
       </div>
 
+      {/* Audio version */}
+      {story.audioUrl && (
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 md:px-10 mt-8">
+          <div className="border border-foreground/15 p-5 sm:p-6 bg-secondary/40">
+            <div className="flex items-center justify-between mb-3">
+              <span className="eyebrow">Listen to this story</span>
+              <span className="text-[11px] tracking-[0.18em] uppercase text-foreground/55">{story.readTime}</span>
+            </div>
+            <audio controls preload="none" src={story.audioUrl} className="w-full">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </div>
+      )}
+
       {/* Body */}
       <article className="py-16 md:py-24">
         <div className="max-w-[1180px] mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-12 gap-8 md:gap-12">
