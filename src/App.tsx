@@ -14,6 +14,9 @@ import IssuePage from "./pages/IssuePage.tsx";
 import Join from "./pages/Join.tsx";
 import Author from "./pages/Author.tsx";
 import Archive from "./pages/Archive.tsx";
+import Events from "./pages/Events.tsx";
+import Letters from "./pages/Letters.tsx";
+import CountryPage from "./pages/CountryPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -32,6 +35,9 @@ const App = () => (
             <Route path="/business/:slug" element={<BusinessPage />} />
             <Route path="/issues/:slug" element={<IssuePage />} />
             <Route path="/archive" element={<Archive />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/letters" element={<Letters />} />
+            <Route path="/africa/:country" element={<CountryPage />} />
             <Route path="/author/:slug" element={<Author />} />
             <Route path="/join" element={<Join />} />
             <Route path="/category/:slug" element={<Category />} />
