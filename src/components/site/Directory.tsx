@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Search, X, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { BUSINESSES } from "@/data/content";
 import { slugify } from "@/lib/slug";
+import { currencyFor } from "@/lib/currency";
 import CityMap from "./CityMap";
 
 const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
@@ -254,7 +255,14 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                 </div>
                 <div className="mt-5 sm:mt-6 flex items-center justify-between text-[10px] sm:text-[11px] tracking-[0.22em] uppercase opacity-70">
                   <span className="truncate pr-2">{b.city}, {b.country}</span>
-                  <span className="group-hover:text-accent transition-colors shrink-0">View →</span>
+                  <span className="flex items-center gap-2 shrink-0">
+                    {currencyFor(b.country) && (
+                      <span className="text-accent" title={currencyFor(b.country)?.name}>
+                        {currencyFor(b.country)!.symbol}
+                      </span>
+                    )}
+                    <span className="group-hover:text-accent transition-colors">View →</span>
+                  </span>
                 </div>
               </Link>
             ))}
