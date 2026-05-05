@@ -2,15 +2,19 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Social from "./Social";
 import ThemeToggle from "./ThemeToggle";
+import { LanguageToggle, useI18n } from "@/lib/i18n";
 
-const links = [
-  { label: "Issues", href: "/#issues", type: "anchor" as const },
-  { label: "Archive", href: "/archive", type: "route" as const },
-  { label: "Categories", href: "/#categories", type: "anchor" as const },
-  { label: "Directory", href: "/directory", type: "route" as const },
-  { label: "Community", href: "/#community", type: "anchor" as const },
-  { label: "Advertise", href: "/#advertise", type: "anchor" as const },
-];
+const useLinks = () => {
+  const { t } = useI18n();
+  return [
+    { label: t("nav.issues"), href: "/#issues", type: "anchor" as const },
+    { label: t("nav.archive"), href: "/archive", type: "route" as const },
+    { label: t("nav.directory"), href: "/directory", type: "route" as const },
+    { label: t("nav.events"), href: "/events", type: "route" as const },
+    { label: t("nav.letters"), href: "/letters", type: "route" as const },
+    { label: t("nav.advertise"), href: "/#advertise", type: "anchor" as const },
+  ];
+};
 
 const Nav = () => {
   const [open, setOpen] = useState(false);
