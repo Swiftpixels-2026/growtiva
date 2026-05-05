@@ -26,14 +26,27 @@ const Footer = () => {
           <nav className="col-span-6 md:col-span-2 flex flex-col gap-3 text-sm">
             <span className="eyebrow mb-2">Discover</span>
             <Link to="/directory" className="link-underline w-fit">Directory</Link>
-            <a href="/#community" className="link-underline w-fit">Community</a>
+            <Link to="/events" className="link-underline w-fit">Events</Link>
+            <Link to="/letters" className="link-underline w-fit">Letters</Link>
             <a href="/#advertise" className="link-underline w-fit">Advertise</a>
           </nav>
 
           <nav className="col-span-12 md:col-span-3 flex flex-col gap-3 text-sm">
-            <span className="eyebrow mb-2">Contact</span>
-            <a href="mailto:hello@growtivaafrica.com" className="link-underline w-fit break-all">hello@growtivaafrica.com</a>
-            <a href="mailto:growtivaafrica@gmail.com" className="link-underline w-fit break-all">growtivaafrica@gmail.com</a>
+            <span className="eyebrow mb-2">Africa</span>
+            <div className="flex flex-wrap gap-x-4 gap-y-2">
+              {[
+                ["nigeria", "Nigeria"],
+                ["kenya", "Kenya"],
+                ["south-africa", "South Africa"],
+                ["ghana", "Ghana"],
+                ["morocco", "Morocco"],
+                ["egypt", "Egypt"],
+                ["senegal", "Senegal"],
+              ].map(([slug, name]) => (
+                <Link key={slug} to={`/africa/${slug}`} className="link-underline w-fit">{name}</Link>
+              ))}
+            </div>
+            <a href="mailto:hello@growtivaafrica.com" className="link-underline w-fit break-all mt-2">hello@growtivaafrica.com</a>
           </nav>
         </div>
 
