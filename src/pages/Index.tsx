@@ -27,7 +27,7 @@ const Index = () => {
       <Nav />
       <Hero />
       <LatestIssue />
-      <AllIssues />
+      
       <Categories />
       <Community />
       <Newsletter />
