@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ISSUES } from "@/data/content";
 import { useIssueReader } from "@/components/site/IssuesProvider";
 import { useGatedDownload } from "@/lib/useGatedDownload";
+import { VerifiedBadge } from "@/lib/emailGate";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 
@@ -47,7 +48,8 @@ const IssuePage = () => {
           <h1 className="font-serif text-4xl md:text-6xl mt-4 leading-[1.02]">{issue.title}</h1>
           <p className="mt-6 text-foreground/75 max-w-lg leading-relaxed">{issue.blurb}</p>
           <p className="mt-3 text-foreground/60">{issue.date}</p>
-          <div className="mt-10 flex flex-col sm:flex-row gap-3">
+          <VerifiedBadge className="mt-8 block" />
+          <div className="mt-4 flex flex-col sm:flex-row gap-3">
             <button onClick={() => open(issue.slug)} className="bg-foreground text-background px-6 sm:px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors">
               Open Flipbook
             </button>
