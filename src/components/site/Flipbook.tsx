@@ -3,6 +3,7 @@ import HTMLFlipBook from "react-pageflip";
 import { X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Issue, FlipPage } from "@/data/content";
+import { useGatedDownload } from "@/lib/useGatedDownload";
 
 type Props = {
   issue: Issue | null;
@@ -114,6 +115,7 @@ const Flipbook = ({ issue, onClose }: Props) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState({ w: 420, h: 560 });
   const [isMobile, setIsMobile] = useState(false);
+  const gatedDownload = useGatedDownload();
 
   useEffect(() => {
     if (!issue) return;
@@ -221,14 +223,14 @@ const Flipbook = ({ issue, onClose }: Props) => {
             <Share2 size={14} /> <span className="hidden sm:inline">Share</span>
           </button>
           {issue.pdfUrl && (
-            <a
-              href={issue.pdfUrl}
-              download
+            <button
+              type="button"
+              onClick={() => gatedDownload(issue)}
               aria-label="Download PDF"
               className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/50 text-white p-2 sm:px-3 sm:py-1.5 hover:bg-white hover:text-[#0b0b0c] transition-colors"
             >
               <Download size={14} /> <span className="hidden sm:inline">PDF</span>
-            </a>
+            </button>
           )}
           <button
             onClick={onClose}
