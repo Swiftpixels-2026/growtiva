@@ -52,7 +52,7 @@ const AllIssues = () => {
                   Read Issue
                 </button>
                 <button
-                  onClick={() => downloadIssuePdf(issue)}
+                  onClick={() => download(issue)}
                   className="link-underline text-muted-foreground hover:text-foreground"
                 >
                   Download PDF
