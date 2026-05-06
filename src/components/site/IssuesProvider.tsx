@@ -18,10 +18,14 @@ export const useIssueReader = () => {
 
 export const IssuesProvider = ({ children }: { children: ReactNode }) => {
   const [active, setActive] = useState<Issue | null>(null);
+  const { require } = useEmailGate();
 
-  const open = (slug: string) => {
+  const open = async (slug: string) => {
     const found = ISSUES.find((i) => i.slug === slug) ?? ISSUES[0];
-    setActive(found);
+    try {
+      await require("read the issue");
+      setActive(found);
+    } catch { /* user dismissed */ }
   };
   const close = () => setActive(null);
 
