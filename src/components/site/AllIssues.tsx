@@ -1,9 +1,10 @@
 import { ISSUES } from "@/data/content";
 import { useIssueReader } from "./IssuesProvider";
-import { downloadIssuePdf } from "@/lib/downloadIssuePdf";
+import { useGatedDownload } from "@/lib/useGatedDownload";
 
 const AllIssues = () => {
   const { open } = useIssueReader();
+  const download = useGatedDownload();
 
   return (
     <section id="issues" className="py-20 sm:py-28 md:py-40 bg-secondary/40 border-t border-foreground/10">
