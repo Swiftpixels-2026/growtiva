@@ -115,6 +115,7 @@ const Flipbook = ({ issue, onClose }: Props) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState({ w: 420, h: 560 });
   const [isMobile, setIsMobile] = useState(false);
+  const gatedDownload = useGatedDownload();
 
   useEffect(() => {
     if (!issue) return;
