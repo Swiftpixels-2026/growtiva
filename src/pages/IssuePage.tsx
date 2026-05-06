@@ -52,9 +52,9 @@ const IssuePage = () => {
               Open Flipbook
             </button>
             {issue.pdfUrl && (
-              <a href={issue.pdfUrl} download className="border border-foreground px-6 sm:px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-foreground hover:text-background transition-colors text-center">
+              <button onClick={() => download(issue)} className="border border-foreground px-6 sm:px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-foreground hover:text-background transition-colors text-center">
                 Download PDF
-              </a>
+              </button>
             )}
           </div>
         </div>
