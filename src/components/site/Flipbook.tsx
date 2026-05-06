@@ -223,14 +223,14 @@ const Flipbook = ({ issue, onClose }: Props) => {
             <Share2 size={14} /> <span className="hidden sm:inline">Share</span>
           </button>
           {issue.pdfUrl && (
-            <a
-              href={issue.pdfUrl}
-              download
+            <button
+              type="button"
+              onClick={() => gatedDownload(issue)}
               aria-label="Download PDF"
               className="inline-flex items-center gap-2 text-[11px] tracking-[0.22em] uppercase border border-white/50 text-white p-2 sm:px-3 sm:py-1.5 hover:bg-white hover:text-[#0b0b0c] transition-colors"
             >
               <Download size={14} /> <span className="hidden sm:inline">PDF</span>
-            </a>
+            </button>
           )}
           <button
             onClick={onClose}
