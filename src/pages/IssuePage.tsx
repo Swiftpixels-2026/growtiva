@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ISSUES } from "@/data/content";
 import { useIssueReader } from "@/components/site/IssuesProvider";
+import { useGatedDownload } from "@/lib/useGatedDownload";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 
@@ -9,6 +10,7 @@ const IssuePage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { open } = useIssueReader();
+  const download = useGatedDownload();
   const issue = ISSUES.find((i) => i.slug === slug);
 
   useEffect(() => {
