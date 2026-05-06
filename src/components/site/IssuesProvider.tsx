@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { ISSUES, type Issue } from "@/data/content";
 import Flipbook from "./Flipbook";
+import { useEmailGate } from "@/lib/emailGate";
 
 type Ctx = {
   open: (slug: string) => void;
