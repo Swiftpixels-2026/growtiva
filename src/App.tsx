@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { IssuesProvider } from "@/components/site/IssuesProvider";
+import { EmailGateProvider } from "@/lib/emailGate";
 import Index from "./pages/Index.tsx";
 import Category from "./pages/Category.tsx";
 import Story from "./pages/Story.tsx";
