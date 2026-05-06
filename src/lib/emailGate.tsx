@@ -1,15 +1,19 @@
-import { createContext, useCallback, useContext, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { CheckCircle2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const STORAGE_KEY = "growtiva:reader-email";
+const VERIFIED_AT_KEY = "growtiva:reader-verified-at";
 const emailSchema = z.string().trim().email().max(255);
 
 type Ctx = {
   /** Resolves with the captured email (or existing one) before running the gated action. Rejects if user cancels. */
   require: (intent?: string) => Promise<string>;
   getEmail: () => string | null;
+  isVerified: boolean;
+  reset: () => void;
 };
 
 const EmailGateCtx = createContext<Ctx | null>(null);
@@ -20,28 +24,53 @@ export const useEmailGate = () => {
   return ctx;
 };
 
+const readStored = (): string | null => {
+  try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+};
+
 export const EmailGateProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [intent, setIntent] = useState<string>("continue");
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [resolver, setResolver] = useState<{ resolve: (e: string) => void; reject: () => void } | null>(null);
+  const [storedEmail, setStoredEmail] = useState<string | null>(() => readStored());
 
-  const getEmail = useCallback(() => {
-    try { return localStorage.getItem(STORAGE_KEY); } catch { return null; }
+  // Use a ref for the pending resolver — avoids stale closures and React warnings
+  // from storing functions inside setState.
+  const resolverRef = useRef<{ resolve: (e: string) => void; reject: () => void } | null>(null);
+
+  // Keep verified state in sync across tabs.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) setStoredEmail(readStored());
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  const getEmail = useCallback(() => readStored(), []);
 
   const require = useCallback((intentLabel = "continue") => {
     return new Promise<string>((resolve, reject) => {
-      const existing = getEmail();
+      const existing = readStored();
       if (existing) { resolve(existing); return; }
+      // Resolve any leftover pending resolver before opening a new one.
+      resolverRef.current?.reject();
+      resolverRef.current = { resolve, reject };
       setIntent(intentLabel);
       setValue("");
       setError(null);
-      setResolver({ resolve, reject });
       setOpen(true);
     });
-  }, [getEmail]);
+  }, []);
+
+  const reset = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(VERIFIED_AT_KEY);
+    } catch {}
+    setStoredEmail(null);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,28 +79,36 @@ export const EmailGateProvider = ({ children }: { children: ReactNode }) => {
       setError("Please enter a valid email address.");
       return;
     }
-    try { localStorage.setItem(STORAGE_KEY, parsed.data); } catch {}
-    toast.success("Welcome to Growtiva Africa.", { description: "Enjoy the issue." });
+    try {
+      localStorage.setItem(STORAGE_KEY, parsed.data);
+      localStorage.setItem(VERIFIED_AT_KEY, new Date().toISOString());
+    } catch {}
+    setStoredEmail(parsed.data);
+    toast.success("You're verified.", { description: "Welcome to Growtiva Africa." });
     setOpen(false);
-    resolver?.resolve(parsed.data);
-    setResolver(null);
+    const r = resolverRef.current;
+    resolverRef.current = null;
+    r?.resolve(parsed.data);
   };
 
   const handleOpenChange = (next: boolean) => {
-    if (!next && resolver) {
-      resolver.reject();
-      setResolver(null);
+    if (!next) {
+      const r = resolverRef.current;
+      resolverRef.current = null;
+      r?.reject();
     }
     setOpen(next);
   };
 
   return (
-    <EmailGateCtx.Provider value={{ require, getEmail }}>
+    <EmailGateCtx.Provider value={{ require, getEmail, isVerified: !!storedEmail, reset }}>
       {children}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md bg-background border-foreground/15">
           <DialogHeader>
-            <span className="text-[10px] tracking-[0.3em] uppercase text-accent">The Reading Room</span>
+            <span className="block text-[10px] tracking-[0.3em] uppercase text-accent">
+              The Reading Room
+            </span>
             <DialogTitle className="font-serif text-2xl md:text-3xl leading-tight mt-2">
               One detail before you {intent}.
             </DialogTitle>
@@ -105,5 +142,23 @@ export const EmailGateProvider = ({ children }: { children: ReactNode }) => {
         </DialogContent>
       </Dialog>
     </EmailGateCtx.Provider>
+  );
+};
+
+/**
+ * Small inline badge — surfaces "You're verified" state on gated CTAs so
+ * returning readers can see their access is already unlocked.
+ */
+export const VerifiedBadge = ({ className = "" }: { className?: string }) => {
+  const { isVerified, getEmail } = useEmailGate();
+  if (!isVerified) return null;
+  const email = getEmail();
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[10px] tracking-[0.22em] uppercase text-accent ${className}`}
+      title={email ? `Verified as ${email}` : "Verified"}
+    >
+      <CheckCircle2 size={12} /> Verified
+    </span>
   );
 };

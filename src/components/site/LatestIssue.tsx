@@ -2,6 +2,7 @@ import cover from "@/assets/issue-01-cover.jpg";
 import { useIssueReader } from "./IssuesProvider";
 import { ISSUES } from "@/data/content";
 import { useGatedDownload } from "@/lib/useGatedDownload";
+import { VerifiedBadge } from "@/lib/emailGate";
 
 const LatestIssue = () => {
   const { open } = useIssueReader();
@@ -57,7 +58,8 @@ const LatestIssue = () => {
               Featuring founders, operators, and creatives shaping what's next.
             </p>
 
-            <div className="mt-12 flex flex-col sm:flex-row gap-4">
+            <VerifiedBadge className="mt-10 block" />
+            <div className="mt-4 flex flex-col sm:flex-row gap-4">
               <button
                 type="button"
                 onClick={() => open("issue-01")}
