@@ -3,6 +3,7 @@ import HTMLFlipBook from "react-pageflip";
 import { X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Issue, FlipPage } from "@/data/content";
+import { useGatedDownload } from "@/lib/useGatedDownload";
 
 type Props = {
   issue: Issue | null;
