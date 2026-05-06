@@ -1,13 +1,14 @@
 import cover from "@/assets/issue-01-cover.jpg";
 import { useIssueReader } from "./IssuesProvider";
 import { ISSUES } from "@/data/content";
-import { downloadIssuePdf } from "@/lib/downloadIssuePdf";
+import { useGatedDownload } from "@/lib/useGatedDownload";
 
 const LatestIssue = () => {
   const { open } = useIssueReader();
+  const download = useGatedDownload();
   const issue01 = ISSUES.find((i) => i.slug === "issue-01")!;
 
-  const handleDownload = () => downloadIssuePdf(issue01);
+  const handleDownload = () => download(issue01);
 
   return (
     <section id="latest" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
