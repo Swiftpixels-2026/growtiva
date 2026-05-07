@@ -19,7 +19,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
   const otherCategories = useMemo(
     () => Array.from(new Set(BUSINESSES.map((b) => b.category))).filter((c) => !FEATURED.includes(c)),
-    []
+    [BUSINESSES]
   );
   const allCategories = [...FEATURED, ...otherCategories];
 
@@ -34,7 +34,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         b.country.toLowerCase().includes(q) ||
         (b.tags ?? []).some((t) => t.toLowerCase().includes(q))
     );
-  }, [query]);
+  }, [query, BUSINESSES]);
 
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
@@ -51,7 +51,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
       (b.tags ?? []).forEach((t) => set.add(t));
     }
     return Array.from(set).sort();
-  }, [filter]);
+  }, [filter, BUSINESSES]);
 
   const tagCounts = useMemo(() => {
     const map: Record<string, number> = {};
