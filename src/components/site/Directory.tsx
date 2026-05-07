@@ -2,14 +2,14 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Search, X, Map as MapIcon, List as ListIcon } from "lucide-react";
-import { BUSINESSES } from "@/data/content";
+import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
 import { currencyFor } from "@/lib/currency";
 import CityMap from "./CityMap";
 
 const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
 
-const Directory = ({ embedded = false }: { embedded?: boolean }) => {
+const { businesses: BUSINESSES } = useDirectory();
   const [filter, setFilter] = useState<string>("Technology");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<string | null>(null);
