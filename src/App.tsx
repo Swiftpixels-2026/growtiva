@@ -32,22 +32,25 @@ const App = () => (
       <BrowserRouter>
         <EmailGateProvider>
           <IssuesProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/directory" element={<DirectoryPage />} />
-              <Route path="/directory/:category" element={<CategoryDirectory />} />
-              <Route path="/business/:slug" element={<BusinessPage />} />
-              <Route path="/issues/:slug" element={<IssuePage />} />
-              <Route path="/archive" element={<Archive />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/letters" element={<Letters />} />
-              <Route path="/africa/:country" element={<CountryPage />} />
-              <Route path="/author/:slug" element={<Author />} />
-              <Route path="/join" element={<Join />} />
-              <Route path="/category/:slug" element={<Category />} />
-              <Route path="/story/:slug" element={<Story />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <DirectoryProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/directory" element={<DirectoryPage />} />
+                <Route path="/directory/:category" element={<CategoryDirectory />} />
+                <Route path="/business/:slug" element={<BusinessPage />} />
+                <Route path="/issues/:slug" element={<IssuePage />} />
+                <Route path="/archive" element={<Archive />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/letters" element={<Letters />} />
+                <Route path="/africa/:country" element={<CountryPage />} />
+                <Route path="/author/:slug" element={<Author />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/category/:slug" element={<Category />} />
+                <Route path="/story/:slug" element={<Story />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </DirectoryProvider>
           </IssuesProvider>
         </EmailGateProvider>
       </BrowserRouter>
