@@ -3,7 +3,8 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
-import { BUSINESSES, STORIES, ISSUES } from "@/data/content";
+import { STORIES, ISSUES } from "@/data/content";
+import { useDirectory } from "@/lib/businessesStore";
 import { currencyFor } from "@/lib/currency";
 import { slugify } from "@/lib/slug";
 
@@ -54,9 +55,10 @@ const CountryPage = () => {
     window.scrollTo(0, 0);
   }, [meta]);
 
+  const { businesses: BUSINESSES } = useDirectory();
   const businesses = useMemo(
     () => (meta ? BUSINESSES.filter((b) => b.country === meta.name) : []),
-    [meta]
+    [meta, BUSINESSES]
   );
   const stories = useMemo(
     () =>

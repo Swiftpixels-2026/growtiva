@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { IssuesProvider } from "@/components/site/IssuesProvider";
 import { EmailGateProvider } from "@/lib/emailGate";
+import { DirectoryProvider } from "@/lib/businessesStore";
+import Admin from "./pages/Admin.tsx";
 import Index from "./pages/Index.tsx";
 import Category from "./pages/Category.tsx";
 import Story from "./pages/Story.tsx";
@@ -30,22 +32,25 @@ const App = () => (
       <BrowserRouter>
         <EmailGateProvider>
           <IssuesProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/directory" element={<DirectoryPage />} />
-              <Route path="/directory/:category" element={<CategoryDirectory />} />
-              <Route path="/business/:slug" element={<BusinessPage />} />
-              <Route path="/issues/:slug" element={<IssuePage />} />
-              <Route path="/archive" element={<Archive />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/letters" element={<Letters />} />
-              <Route path="/africa/:country" element={<CountryPage />} />
-              <Route path="/author/:slug" element={<Author />} />
-              <Route path="/join" element={<Join />} />
-              <Route path="/category/:slug" element={<Category />} />
-              <Route path="/story/:slug" element={<Story />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <DirectoryProvider>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/directory" element={<DirectoryPage />} />
+                <Route path="/directory/:category" element={<CategoryDirectory />} />
+                <Route path="/business/:slug" element={<BusinessPage />} />
+                <Route path="/issues/:slug" element={<IssuePage />} />
+                <Route path="/archive" element={<Archive />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/letters" element={<Letters />} />
+                <Route path="/africa/:country" element={<CountryPage />} />
+                <Route path="/author/:slug" element={<Author />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/category/:slug" element={<Category />} />
+                <Route path="/story/:slug" element={<Story />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </DirectoryProvider>
           </IssuesProvider>
         </EmailGateProvider>
       </BrowserRouter>

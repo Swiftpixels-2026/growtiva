@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Search, X, Map as MapIcon, List as ListIcon } from "lucide-react";
-import { BUSINESSES } from "@/data/content";
+import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
 import { currencyFor } from "@/lib/currency";
 import CityMap from "./CityMap";
@@ -10,6 +10,7 @@ import CityMap from "./CityMap";
 const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
 
 const Directory = ({ embedded = false }: { embedded?: boolean }) => {
+  const { businesses: BUSINESSES } = useDirectory();
   const [filter, setFilter] = useState<string>("Technology");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<string | null>(null);
@@ -18,7 +19,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
 
   const otherCategories = useMemo(
     () => Array.from(new Set(BUSINESSES.map((b) => b.category))).filter((c) => !FEATURED.includes(c)),
-    []
+    [BUSINESSES]
   );
   const allCategories = [...FEATURED, ...otherCategories];
 
@@ -33,7 +34,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         b.country.toLowerCase().includes(q) ||
         (b.tags ?? []).some((t) => t.toLowerCase().includes(q))
     );
-  }, [query]);
+  }, [query, BUSINESSES]);
 
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
@@ -50,7 +51,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
       (b.tags ?? []).forEach((t) => set.add(t));
     }
     return Array.from(set).sort();
-  }, [filter]);
+  }, [filter, BUSINESSES]);
 
   const tagCounts = useMemo(() => {
     const map: Record<string, number> = {};

@@ -4,7 +4,7 @@ import { ArrowLeft, MapPin, Map as MapIcon, List as ListIcon } from "lucide-reac
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import CityMap from "@/components/site/CityMap";
-import { BUSINESSES } from "@/data/content";
+import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
 
 const CATEGORY_META: Record<string, { title: string; eyebrow: string; dek: string }> = {
@@ -45,10 +45,11 @@ const CategoryDirectory = () => {
   const meta = CATEGORY_META[category.toLowerCase()];
   const [country, setCountry] = useState<string>("All");
   const [view, setView] = useState<"list" | "map">("list");
+  const { businesses: BUSINESSES } = useDirectory();
 
   const all = useMemo(
     () => (meta ? BUSINESSES.filter((b) => b.category.toLowerCase() === meta.title.toLowerCase()) : []),
-    [meta]
+    [meta, BUSINESSES]
   );
 
   const countries = useMemo(() => {

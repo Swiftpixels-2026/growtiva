@@ -145,7 +145,7 @@ export const ISSUES: Issue[] = [
     volume: "Vol. I · MMXXVI",
     title: "The Builders Edition",
     blurb: "Founders, creators, and operators building across Africa.",
-    date: "April 2026",
+    date: "July 2026",
     cover: cover01,
     pdfUrl: "/issues/issue-01.pdf",
     pages: [
