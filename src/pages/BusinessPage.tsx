@@ -3,16 +3,17 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Mail, Phone, Globe, MapPin, ArrowLeft } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
-import { BUSINESSES } from "@/data/content";
+import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
 
 const BusinessPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { businesses: BUSINESSES } = useDirectory();
 
   const business = useMemo(
     () => BUSINESSES.find((b) => slugify(b.name) === slug),
-    [slug]
+    [slug, BUSINESSES]
   );
 
   const related = useMemo(
@@ -22,7 +23,7 @@ const BusinessPage = () => {
             (b) => b.category === business.category && b.name !== business.name
           ).slice(0, 3)
         : [],
-    [business]
+    [business, BUSINESSES]
   );
 
   useEffect(() => {
