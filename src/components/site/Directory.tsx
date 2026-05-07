@@ -9,7 +9,8 @@ import CityMap from "./CityMap";
 
 const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
 
-const { businesses: BUSINESSES } = useDirectory();
+const Directory = ({ embedded = false }: { embedded?: boolean }) => {
+  const { businesses: BUSINESSES } = useDirectory();
   const [filter, setFilter] = useState<string>("Technology");
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<string | null>(null);
