@@ -93,3 +93,55 @@ export async function submitContact(data: {
     };
   }
 }
+
+// ─── Inner Circle ─────────────────────────────────────────────────────────────
+export async function submitInnerCircle(data: {
+  name: string;
+  email: string;
+  role: string;
+  city: string;
+  why: string;
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/inner-circle`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}
+
+// ─── Listings ─────────────────────────────────────────────────────────────────
+export async function submitListing(data: {
+  name: string;
+  category: string;
+  city: string;
+  country: string;
+  blurb: string;
+  services: string;
+  email: string;
+  phone: string;
+  url?: string;
+  image?: string;
+  tags?: string[];
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/listings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}

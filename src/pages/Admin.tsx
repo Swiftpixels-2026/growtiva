@@ -14,10 +14,9 @@ import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
+import { login as apiLogin, logout as apiLogout, isAuthenticated } from "@/api/auth";
+import { submitListing } from "@/api/forms";
 import type { Business } from "@/data/content";
-
-const ADMIN_PASSWORD = "Systemoverhustle";
-const SESSION_KEY = "growtiva:admin-session-v1";
 
 const emptyForm: Business = {
   name: "",
@@ -51,10 +50,12 @@ const Admin = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [tagsInput, setTagsInput] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     document.title = "Admin — Growtiva Africa";
-    if (sessionStorage.getItem(SESSION_KEY) === "1") setAuthed(true);
+    if (isAuthenticated()) setAuthed(true);
   }, []);
 
   const filtered = useMemo(() => {
@@ -69,19 +70,26 @@ const Admin = () => {
     );
   }, [businesses, query]);
 
-  const tryLogin = (e: React.FormEvent) => {
+  const tryLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, "1");
-      setAuthed(true);
-      toast.success("Welcome, editor.");
-    } else {
-      toast.error("Incorrect password");
+    setLoginLoading(true);
+    try {
+      const res = await apiLogin(pw);
+      if (res.success) {
+        setAuthed(true);
+        toast.success("Welcome, editor.");
+      } else {
+        toast.error(res.error || "Incorrect password");
+      }
+    } catch {
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
-  const logout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
+  const handleLogout = async () => {
+    await apiLogout();
     setAuthed(false);
     setPw("");
   };
@@ -110,7 +118,7 @@ const Admin = () => {
     setForm((f) => ({ ...f, image: data }));
   };
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
       !form.name.trim() ||
@@ -130,14 +138,40 @@ const Admin = () => {
       .map((t) => t.trim())
       .filter(Boolean);
     const payload: Business = { ...form, tags };
-    if (editingSlug) {
-      updateBusiness(editingSlug, payload);
-      toast.success(`Updated ${payload.name}`);
-    } else {
-      addBusiness(payload);
-      toast.success(`Added ${payload.name}`);
+
+    setSaving(true);
+    try {
+      const res = await submitListing({
+        name: payload.name,
+        category: payload.category,
+        city: payload.city,
+        country: payload.country,
+        blurb: payload.blurb,
+        services: payload.services,
+        email: payload.email || "",
+        phone: payload.phone || "",
+        url: payload.url || undefined,
+        image: payload.image || undefined,
+        tags,
+      });
+
+      if (res.success) {
+        if (editingSlug) {
+          updateBusiness(editingSlug, payload);
+          toast.success(`Updated ${payload.name}`);
+        } else {
+          addBusiness(payload);
+          toast.success(`Added ${payload.name}`);
+        }
+        setOpen(false);
+      } else {
+        toast.error(res.error || "Failed to save listing. Please try again.");
+      }
+    } catch {
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setSaving(false);
     }
-    setOpen(false);
   };
 
   const remove = (b: Business) => {
@@ -169,9 +203,10 @@ const Admin = () => {
             />
             <button
               type="submit"
-              className="bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
+              disabled={loginLoading}
+              className="bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign in →
+              {loginLoading ? "Signing in…" : "Sign in →"}
             </button>
           </form>
         </section>
@@ -202,7 +237,7 @@ const Admin = () => {
               <Plus size={14} /> New listing
             </button>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="inline-flex items-center gap-2 border border-foreground/30 px-5 py-3 text-[11px] tracking-[0.22em] uppercase hover:border-foreground transition-colors"
             >
               <LogOut size={14} /> Sign out
@@ -463,9 +498,14 @@ const Admin = () => {
               </button>
               <button
                 type="submit"
-                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase bg-foreground text-background hover:bg-accent hover:text-foreground transition-colors"
+                disabled={saving}
+                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase bg-foreground text-background hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {editingSlug ? "Save changes" : "Add listing"}
+                {saving
+                  ? "Saving…"
+                  : editingSlug
+                    ? "Save changes"
+                    : "Add listing"}
               </button>
             </div>
           </form>

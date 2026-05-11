@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { submitInnerCircle } from "@/api/forms";
 import collage from "@/assets/community-collage-2.jpg";
 
 const Join = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -21,9 +24,22 @@ const Join = () => {
     document.title = "Join the Inner Circle — Growtiva Africa";
   }, []);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      const res = await submitInnerCircle(form);
+      if (res.success) {
+        setSubmitted(true);
+        toast.success("Application submitted successfully!");
+      } else {
+        toast.error(res.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -144,9 +160,10 @@ const Join = () => {
                   <div className="md:col-span-2">
                     <button
                       type="submit"
-                      className="inline-flex items-center bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
+                      disabled={loading}
+                      className="inline-flex items-center bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Submit Application
+                      {loading ? "Submitting…" : "Submit Application"}
                     </button>
                   </div>
                 </form>
