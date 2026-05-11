@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, LogOut, Search, Image as ImageIcon } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  LogOut,
+  Search,
+  Image as ImageIcon,
+} from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { useDirectory } from "@/lib/businessesStore";
@@ -36,7 +44,8 @@ const fileToDataUrl = (file: File) =>
 const Admin = () => {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
-  const { businesses, addBusiness, updateBusiness, deleteBusiness } = useDirectory();
+  const { businesses, addBusiness, updateBusiness, deleteBusiness } =
+    useDirectory();
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [form, setForm] = useState<Business>(emptyForm);
   const [open, setOpen] = useState(false);
@@ -56,7 +65,7 @@ const Admin = () => {
         b.name.toLowerCase().includes(q) ||
         b.category.toLowerCase().includes(q) ||
         b.country.toLowerCase().includes(q) ||
-        b.city.toLowerCase().includes(q)
+        b.city.toLowerCase().includes(q),
     );
   }, [businesses, query]);
 
@@ -103,7 +112,12 @@ const Admin = () => {
 
   const save = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.category.trim() || !form.city.trim() || !form.country.trim()) {
+    if (
+      !form.name.trim() ||
+      !form.category.trim() ||
+      !form.city.trim() ||
+      !form.country.trim()
+    ) {
       toast.error("Name, category, city, and country are required.");
       return;
     }
@@ -138,8 +152,12 @@ const Admin = () => {
         <Nav />
         <section className="pt-32 sm:pt-40 pb-32 max-w-md mx-auto px-4 sm:px-6">
           <span className="eyebrow">Restricted</span>
-          <h1 className="font-serif text-4xl sm:text-5xl mt-4">Editor access</h1>
-          <p className="mt-4 text-foreground/70 text-sm">Enter the admin password to manage the business directory.</p>
+          <h1 className="font-serif text-4xl sm:text-5xl mt-4">
+            Editor access
+          </h1>
+          <p className="mt-4 text-foreground/70 text-sm">
+            Enter the admin password to manage the business directory.
+          </p>
           <form onSubmit={tryLogin} className="mt-10 flex flex-col gap-5">
             <input
               type="password"
@@ -169,8 +187,12 @@ const Admin = () => {
         <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
             <span className="eyebrow">Admin · Directory</span>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mt-4">Manage businesses</h1>
-            <p className="mt-3 text-foreground/65 text-sm">{businesses.length} listings · changes saved on this device.</p>
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mt-4">
+              Manage businesses
+            </h1>
+            <p className="mt-3 text-foreground/65 text-sm">
+              {businesses.length} listings · changes saved on this device.
+            </p>
           </div>
           <div className="flex gap-3">
             <button
@@ -189,7 +211,10 @@ const Admin = () => {
         </div>
 
         <div className="relative max-w-md mb-6">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+          />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -211,10 +236,17 @@ const Admin = () => {
             </thead>
             <tbody>
               {filtered.map((b) => (
-                <tr key={slugify(b.name)} className="border-t border-foreground/10">
+                <tr
+                  key={slugify(b.name)}
+                  className="border-t border-foreground/10"
+                >
                   <td className="p-3">
                     {b.image ? (
-                      <img src={b.image} alt={b.name} className="h-12 w-16 object-cover" />
+                      <img
+                        src={b.image}
+                        alt={b.name}
+                        className="h-12 w-16 object-cover"
+                      />
                     ) : (
                       <div className="h-12 w-16 bg-foreground/10 flex items-center justify-center">
                         <ImageIcon size={16} className="text-foreground/40" />
@@ -222,11 +254,20 @@ const Admin = () => {
                     )}
                   </td>
                   <td className="p-3">
-                    <Link to={`/business/${slugify(b.name)}`} className="font-serif text-base hover:text-accent">{b.name}</Link>
-                    <div className="text-xs text-foreground/55 line-clamp-1 max-w-md">{b.blurb}</div>
+                    <Link
+                      to={`/business/${slugify(b.name)}`}
+                      className="font-serif text-base hover:text-accent"
+                    >
+                      {b.name}
+                    </Link>
+                    <div className="text-xs text-foreground/55 line-clamp-1 max-w-md">
+                      {b.blurb}
+                    </div>
                   </td>
                   <td className="p-3 text-foreground/75">{b.category}</td>
-                  <td className="p-3 text-foreground/75">{b.city}, {b.country}</td>
+                  <td className="p-3 text-foreground/75">
+                    {b.city}, {b.country}
+                  </td>
                   <td className="p-3 text-right whitespace-nowrap">
                     <button
                       onClick={() => openEdit(b)}
@@ -244,7 +285,14 @@ const Admin = () => {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} className="p-8 text-center text-foreground/60">No listings.</td></tr>
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="p-8 text-center text-foreground/60"
+                  >
+                    No listings.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -252,45 +300,139 @@ const Admin = () => {
       </section>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 overflow-y-auto" onClick={() => setOpen(false)}>
+        <div
+          className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4"
+          onClick={() => setOpen(false)}
+        >
           <form
             onSubmit={save}
             onClick={(e) => e.stopPropagation()}
-            className="bg-background w-full max-w-2xl my-8 border border-foreground/20 shadow-2xl"
+            className="bg-background w-full max-w-2xl border border-foreground/20 shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[90vh]"
           >
-            <div className="flex items-center justify-between p-5 border-b border-foreground/10">
-              <h2 className="font-serif text-2xl">{editingSlug ? "Edit listing" : "New listing"}</h2>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Close">
+            <div className="flex items-center justify-between p-5 border-b border-foreground/10 shrink-0">
+              <h2 className="font-serif text-2xl">
+                {editingSlug ? "Edit listing" : "New listing"}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+              >
                 <X size={18} />
               </button>
             </div>
-            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <input required placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="sm:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input required placeholder="Category *" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input required placeholder="City *" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input required placeholder="Country *" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input placeholder="Tags (comma-separated)" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <textarea required rows={2} placeholder="Short blurb *" value={form.blurb} onChange={(e) => setForm({ ...form, blurb: e.target.value })}
-                className="sm:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none resize-none" />
-              <textarea required rows={3} placeholder="Services *" value={form.services} onChange={(e) => setForm({ ...form, services: e.target.value })}
-                className="sm:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none resize-none" />
-              <input type="email" placeholder="Email" value={form.email ?? ""} onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input placeholder="Phone" value={form.phone ?? ""} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
-              <input placeholder="Website URL" value={form.url ?? ""} onChange={(e) => setForm({ ...form, url: e.target.value })}
-                className="sm:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none" />
+            <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto custom-scrollbar">
+              <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Name *</label>
+                <input
+                  required
+                  placeholder="Business Name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Category *</label>
+                <input
+                  required
+                  placeholder="e.g. Design, Tech"
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">City *</label>
+                <input
+                  required
+                  placeholder="City"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Country *</label>
+                <input
+                  required
+                  placeholder="Country"
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Tags</label>
+                <input
+                  placeholder="comma-separated"
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Short blurb *</label>
+                <textarea
+                  required
+                  rows={2}
+                  placeholder="A concise description..."
+                  value={form.blurb}
+                  onChange={(e) => setForm({ ...form, blurb: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none resize-none w-full"
+                />
+              </div>
+              <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Services *</label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="List the services offered..."
+                  value={form.services}
+                  onChange={(e) => setForm({ ...form, services: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none resize-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Email</label>
+                <input
+                  type="email"
+                  placeholder="email@example.com"
+                  value={form.email ?? ""}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Phone</label>
+                <input
+                  placeholder="+123..."
+                  value={form.phone ?? ""}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
+              <div className="sm:col-span-2 flex flex-col gap-1.5">
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Website URL</label>
+                <input
+                  placeholder="https://..."
+                  value={form.url ?? ""}
+                  onChange={(e) => setForm({ ...form, url: e.target.value })}
+                  className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
+                />
+              </div>
 
               <div className="sm:col-span-2">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/60">Image *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/60">
+                  Image *
+                </label>
                 <div className="mt-2 flex items-center gap-4">
                   {form.image ? (
-                    <img src={form.image} alt="preview" className="h-24 w-32 object-cover border border-foreground/15" />
+                    <img
+                      src={form.image}
+                      alt="preview"
+                      className="h-24 w-32 object-cover border border-foreground/15"
+                    />
                   ) : (
                     <div className="h-24 w-32 bg-foreground/5 border border-foreground/15 flex items-center justify-center text-foreground/40">
                       <ImageIcon size={20} />
@@ -311,13 +453,18 @@ const Admin = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t border-foreground/10">
-              <button type="button" onClick={() => setOpen(false)}
-                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase border border-foreground/30 hover:border-foreground transition-colors">
+            <div className="flex justify-end gap-3 p-5 border-t border-foreground/10 shrink-0">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase border border-foreground/30 hover:border-foreground transition-colors"
+              >
                 Cancel
               </button>
-              <button type="submit"
-                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase bg-foreground text-background hover:bg-accent hover:text-foreground transition-colors">
+              <button
+                type="submit"
+                className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase bg-foreground text-background hover:bg-accent hover:text-foreground transition-colors"
+              >
                 {editingSlug ? "Save changes" : "Add listing"}
               </button>
             </div>
