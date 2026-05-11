@@ -1,3 +1,5 @@
+import { getToken } from "./auth";
+
 const API_BASE = "https://api.swiftpixelsstudio.com";
 
 type ApiResponse = {
@@ -134,7 +136,10 @@ export async function submitListing(data: {
   try {
     const res = await fetch(`${API_BASE}/api/growtiva/listings`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
       body: JSON.stringify(data),
     });
     return await res.json();

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Pencil,
@@ -26,6 +27,7 @@ import {
   getInnerCircleApplications,
   deleteInnerCircleApplication,
   type InnerCircleApplication,
+  type PaginatedResponse,
 } from "@/api/admin";
 import type { Business } from "@/data/content";
 
@@ -54,6 +56,7 @@ const fileToDataUrl = (file: File) =>
   });
 
 const Admin = () => {
+  const queryClient = useQueryClient();
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
   const { businesses, addBusiness, updateBusiness, deleteBusiness } =
@@ -63,13 +66,9 @@ const Admin = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [tagsInput, setTagsInput] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<AdminTab>("listings");
 
   // Inner Circle state
-  const [applications, setApplications] = useState<InnerCircleApplication[]>([]);
-  const [appsLoading, setAppsLoading] = useState(false);
   const [appQuery, setAppQuery] = useState("");
 
   useEffect(() => {
@@ -77,33 +76,89 @@ const Admin = () => {
     if (isAuthenticated()) setAuthed(true);
   }, []);
 
-  const fetchApplications = useCallback(async () => {
-    setAppsLoading(true);
-    try {
-      const res = await getInnerCircleApplications({ limit: 100 });
-      setApplications(res.data);
-    } catch {
-      toast.error("Failed to load applications.");
-    } finally {
-      setAppsLoading(false);
-    }
-  }, []);
+  const { data: applicationsData, isLoading: appsLoading } = useQuery({
+    queryKey: ["inner-circle-applications"],
+    queryFn: () => getInnerCircleApplications({ limit: 100 }),
+    enabled: authed && tab === "inner-circle",
+  });
 
-  useEffect(() => {
-    if (authed && tab === "inner-circle") {
-      fetchApplications();
-    }
-  }, [authed, tab, fetchApplications]);
+  const applications = useMemo(
+    () => applicationsData?.data ?? [],
+    [applicationsData],
+  );
+
+  const loginMutation = useMutation({
+    mutationFn: (password: string) => apiLogin(password),
+    onSuccess: (res) => {
+      if (res.success) {
+        setAuthed(true);
+        toast.success("Welcome, editor.");
+      } else {
+        toast.error(res.error || "Incorrect password");
+      }
+    },
+    onError: () => {
+      toast.error("Network error. Please check your connection.");
+    },
+  });
+
+  const saveListingMutation = useMutation({
+    mutationFn: (payload: Parameters<typeof submitListing>[0] & { payload: Business; editingSlug: string | null }) =>
+      submitListing(payload),
+    onSuccess: (res, variables) => {
+      if (res.success) {
+        const { payload, editingSlug } = variables;
+        if (editingSlug) {
+          updateBusiness(editingSlug, payload);
+          toast.success(`Updated ${payload.name}`);
+        } else {
+          addBusiness(payload);
+          toast.success(`Added ${payload.name}`);
+        }
+        setOpen(false);
+      } else {
+        toast.error(res.error || "Failed to save listing. Please try again.");
+      }
+    },
+    onError: () => {
+      toast.error("Network error. Please check your connection.");
+    },
+  });
+
+  const removeApplicationMutation = useMutation({
+    mutationFn: (id: string) => deleteInnerCircleApplication(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["inner-circle-applications"],
+        (old: PaginatedResponse<InnerCircleApplication> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((a: InnerCircleApplication) => a._id !== id),
+          };
+        },
+      );
+      toast.success("Application removed");
+    },
+    onError: () => {
+      toast.error("Failed to remove application.");
+    },
+  });
+
+  const tryLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate(pw);
+  };
+
+  const handleLogout = async () => {
+    await apiLogout();
+    setAuthed(false);
+    setPw("");
+  };
 
   const removeApplication = async (app: InnerCircleApplication) => {
     if (!confirm(`Remove application from "${app.name}"?`)) return;
-    try {
-      await deleteInnerCircleApplication(app._id);
-      setApplications((prev) => prev.filter((a) => a._id !== app._id));
-      toast.success(`Removed ${app.name}'s application`);
-    } catch {
-      toast.error("Failed to remove application.");
-    }
+    removeApplicationMutation.mutate(app._id);
   };
 
   const filteredApps = useMemo(() => {
@@ -130,29 +185,6 @@ const Admin = () => {
     );
   }, [businesses, query]);
 
-  const tryLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLoading(true);
-    try {
-      const res = await apiLogin(pw);
-      if (res.success) {
-        setAuthed(true);
-        toast.success("Welcome, editor.");
-      } else {
-        toast.error(res.error || "Incorrect password");
-      }
-    } catch {
-      toast.error("Network error. Please check your connection.");
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    await apiLogout();
-    setAuthed(false);
-    setPw("");
-  };
 
   const openNew = () => {
     setEditingSlug(null);
@@ -199,39 +231,21 @@ const Admin = () => {
       .filter(Boolean);
     const payload: Business = { ...form, tags };
 
-    setSaving(true);
-    try {
-      const res = await submitListing({
-        name: payload.name,
-        category: payload.category,
-        city: payload.city,
-        country: payload.country,
-        blurb: payload.blurb,
-        services: payload.services,
-        email: payload.email || "",
-        phone: payload.phone || "",
-        url: payload.url || undefined,
-        image: payload.image || undefined,
-        tags,
-      });
-
-      if (res.success) {
-        if (editingSlug) {
-          updateBusiness(editingSlug, payload);
-          toast.success(`Updated ${payload.name}`);
-        } else {
-          addBusiness(payload);
-          toast.success(`Added ${payload.name}`);
-        }
-        setOpen(false);
-      } else {
-        toast.error(res.error || "Failed to save listing. Please try again.");
-      }
-    } catch {
-      toast.error("Network error. Please check your connection.");
-    } finally {
-      setSaving(false);
-    }
+    saveListingMutation.mutate({
+      name: payload.name,
+      category: payload.category,
+      city: payload.city,
+      country: payload.country,
+      blurb: payload.blurb,
+      services: payload.services,
+      email: payload.email || "",
+      phone: payload.phone || "",
+      url: payload.url || undefined,
+      image: payload.image || undefined,
+      tags,
+      payload,
+      editingSlug,
+    });
   };
 
   const remove = (b: Business) => {
@@ -263,10 +277,10 @@ const Admin = () => {
             />
             <button
               type="submit"
-              disabled={loginLoading}
+              disabled={loginMutation.isPending}
               className="bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loginLoading ? "Signing in…" : "Sign in →"}
+              {loginMutation.isPending ? "Signing in…" : "Sign in →"}
             </button>
           </form>
         </section>
@@ -666,10 +680,10 @@ const Admin = () => {
               </button>
               <button
                 type="submit"
-                disabled={saving}
+                disabled={saveListingMutation.isPending}
                 className="px-5 py-3 text-[11px] tracking-[0.22em] uppercase bg-foreground text-background hover:bg-accent hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving
+                {saveListingMutation.isPending
                   ? "Saving…"
                   : editingSlug
                     ? "Save changes"
