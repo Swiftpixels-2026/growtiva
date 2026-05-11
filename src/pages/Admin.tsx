@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -9,6 +9,12 @@ import {
   LogOut,
   Search,
   Image as ImageIcon,
+  Users,
+  Building2,
+  Loader2,
+  Mail,
+  MapPin,
+  Briefcase,
 } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
@@ -16,7 +22,14 @@ import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
 import { login as apiLogin, logout as apiLogout, isAuthenticated } from "@/api/auth";
 import { submitListing } from "@/api/forms";
+import {
+  getInnerCircleApplications,
+  deleteInnerCircleApplication,
+  type InnerCircleApplication,
+} from "@/api/admin";
 import type { Business } from "@/data/content";
+
+type AdminTab = "listings" | "inner-circle";
 
 const emptyForm: Business = {
   name: "",
@@ -52,11 +65,58 @@ const Admin = () => {
   const [tagsInput, setTagsInput] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<AdminTab>("listings");
+
+  // Inner Circle state
+  const [applications, setApplications] = useState<InnerCircleApplication[]>([]);
+  const [appsLoading, setAppsLoading] = useState(false);
+  const [appQuery, setAppQuery] = useState("");
 
   useEffect(() => {
     document.title = "Admin — Growtiva Africa";
     if (isAuthenticated()) setAuthed(true);
   }, []);
+
+  const fetchApplications = useCallback(async () => {
+    setAppsLoading(true);
+    try {
+      const res = await getInnerCircleApplications({ limit: 100 });
+      setApplications(res.data);
+    } catch {
+      toast.error("Failed to load applications.");
+    } finally {
+      setAppsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authed && tab === "inner-circle") {
+      fetchApplications();
+    }
+  }, [authed, tab, fetchApplications]);
+
+  const removeApplication = async (app: InnerCircleApplication) => {
+    if (!confirm(`Remove application from "${app.name}"?`)) return;
+    try {
+      await deleteInnerCircleApplication(app._id);
+      setApplications((prev) => prev.filter((a) => a._id !== app._id));
+      toast.success(`Removed ${app.name}'s application`);
+    } catch {
+      toast.error("Failed to remove application.");
+    }
+  };
+
+  const filteredApps = useMemo(() => {
+    const q = appQuery.trim().toLowerCase();
+    if (!q) return applications;
+    return applications.filter(
+      (a) =>
+        a.name.toLowerCase().includes(q) ||
+        a.email.toLowerCase().includes(q) ||
+        a.city.toLowerCase().includes(q) ||
+        a.role.toLowerCase().includes(q),
+    );
+  }, [applications, appQuery]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -219,23 +279,27 @@ const Admin = () => {
     <main className="bg-background text-foreground min-h-screen">
       <Nav />
       <section className="pt-28 sm:pt-32 pb-20 max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
-            <span className="eyebrow">Admin · Directory</span>
+            <span className="eyebrow">Admin Panel</span>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mt-4">
-              Manage businesses
+              {tab === "listings" ? "Manage businesses" : "Inner Circle"}
             </h1>
             <p className="mt-3 text-foreground/65 text-sm">
-              {businesses.length} listings · changes saved on this device.
+              {tab === "listings"
+                ? `${businesses.length} listings · changes saved on this device.`
+                : `${applications.length} applications received.`}
             </p>
           </div>
           <div className="flex gap-3">
-            <button
-              onClick={openNew}
-              className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-3 text-[11px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
-            >
-              <Plus size={14} /> New listing
-            </button>
+            {tab === "listings" && (
+              <button
+                onClick={openNew}
+                className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-3 text-[11px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors"
+              >
+                <Plus size={14} /> New listing
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="inline-flex items-center gap-2 border border-foreground/30 px-5 py-3 text-[11px] tracking-[0.22em] uppercase hover:border-foreground transition-colors"
@@ -245,93 +309,197 @@ const Admin = () => {
           </div>
         </div>
 
-        <div className="relative max-w-md mb-6">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
-          />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name, category, city…"
-            className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
-          />
+        {/* ── Tab Bar ── */}
+        <div className="flex gap-1 border-b border-foreground/15 mb-8">
+          <button
+            onClick={() => setTab("listings")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "listings"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Building2 size={14} /> Listings
+          </button>
+          <button
+            onClick={() => setTab("inner-circle")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "inner-circle"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Users size={14} /> Inner Circle
+          </button>
         </div>
 
-        <div className="border border-foreground/15 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-secondary/40 text-[10px] tracking-[0.22em] uppercase text-foreground/60">
-              <tr>
-                <th className="text-left p-3">Image</th>
-                <th className="text-left p-3">Name</th>
-                <th className="text-left p-3">Category</th>
-                <th className="text-left p-3">Location</th>
-                <th className="text-right p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((b) => (
-                <tr
-                  key={slugify(b.name)}
-                  className="border-t border-foreground/10"
-                >
-                  <td className="p-3">
-                    {b.image ? (
-                      <img
-                        src={b.image}
-                        alt={b.name}
-                        className="h-12 w-16 object-cover"
-                      />
-                    ) : (
-                      <div className="h-12 w-16 bg-foreground/10 flex items-center justify-center">
-                        <ImageIcon size={16} className="text-foreground/40" />
-                      </div>
-                    )}
-                  </td>
-                  <td className="p-3">
-                    <Link
-                      to={`/business/${slugify(b.name)}`}
-                      className="font-serif text-base hover:text-accent"
+        {/* ── Listings Tab ── */}
+        {tab === "listings" && (
+          <>
+            <div className="relative max-w-md mb-6">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+              />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search name, category, city…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+              />
+            </div>
+
+            <div className="border border-foreground/15 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-secondary/40 text-[10px] tracking-[0.22em] uppercase text-foreground/60">
+                  <tr>
+                    <th className="text-left p-3">Image</th>
+                    <th className="text-left p-3">Name</th>
+                    <th className="text-left p-3">Category</th>
+                    <th className="text-left p-3">Location</th>
+                    <th className="text-right p-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((b) => (
+                    <tr
+                      key={slugify(b.name)}
+                      className="border-t border-foreground/10"
                     >
-                      {b.name}
-                    </Link>
-                    <div className="text-xs text-foreground/55 line-clamp-1 max-w-md">
-                      {b.blurb}
-                    </div>
-                  </td>
-                  <td className="p-3 text-foreground/75">{b.category}</td>
-                  <td className="p-3 text-foreground/75">
-                    {b.city}, {b.country}
-                  </td>
-                  <td className="p-3 text-right whitespace-nowrap">
-                    <button
-                      onClick={() => openEdit(b)}
-                      className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-foreground/30 px-3 py-2 hover:border-foreground transition-colors mr-2"
-                    >
-                      <Pencil size={12} /> Edit
-                    </button>
-                    <button
-                      onClick={() => remove(b)}
-                      className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-destructive/40 text-destructive px-3 py-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                    >
-                      <Trash2 size={12} /> Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="p-8 text-center text-foreground/60"
+                      <td className="p-3">
+                        {b.image ? (
+                          <img
+                            src={b.image}
+                            alt={b.name}
+                            className="h-12 w-16 object-cover"
+                          />
+                        ) : (
+                          <div className="h-12 w-16 bg-foreground/10 flex items-center justify-center">
+                            <ImageIcon size={16} className="text-foreground/40" />
+                          </div>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <Link
+                          to={`/business/${slugify(b.name)}`}
+                          className="font-serif text-base hover:text-accent"
+                        >
+                          {b.name}
+                        </Link>
+                        <div className="text-xs text-foreground/55 line-clamp-1 max-w-md">
+                          {b.blurb}
+                        </div>
+                      </td>
+                      <td className="p-3 text-foreground/75">{b.category}</td>
+                      <td className="p-3 text-foreground/75">
+                        {b.city}, {b.country}
+                      </td>
+                      <td className="p-3 text-right whitespace-nowrap">
+                        <button
+                          onClick={() => openEdit(b)}
+                          className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-foreground/30 px-3 py-2 hover:border-foreground transition-colors mr-2"
+                        >
+                          <Pencil size={12} /> Edit
+                        </button>
+                        <button
+                          onClick={() => remove(b)}
+                          className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-destructive/40 text-destructive px-3 py-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                        >
+                          <Trash2 size={12} /> Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="p-8 text-center text-foreground/60"
+                      >
+                        No listings.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* ── Inner Circle Tab ── */}
+        {tab === "inner-circle" && (
+          <>
+            <div className="relative max-w-md mb-6">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+              />
+              <input
+                value={appQuery}
+                onChange={(e) => setAppQuery(e.target.value)}
+                placeholder="Search name, email, city, role…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+              />
+            </div>
+
+            {appsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 size={24} className="animate-spin text-foreground/40" />
+              </div>
+            ) : filteredApps.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No applications found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredApps.map((app) => (
+                  <div
+                    key={app._id}
+                    className="border border-foreground/15 p-5 flex flex-col gap-3 hover:border-foreground/30 transition-colors"
                   >
-                    No listings.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-serif text-lg leading-tight">{app.name}</h3>
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-foreground/60">
+                          <Mail size={11} />
+                          <span>{app.email}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeApplication(app)}
+                        className="shrink-0 p-1.5 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Remove application"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground/70">
+                      <span className="inline-flex items-center gap-1">
+                        <Briefcase size={11} /> {app.role}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin size={11} /> {app.city}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-foreground/75 leading-relaxed line-clamp-3">
+                      {app.why}
+                    </p>
+
+                    <div className="mt-auto pt-2 border-t border-foreground/10 text-[10px] tracking-[0.15em] uppercase text-foreground/40">
+                      {new Date(app.createdAt).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {open && (

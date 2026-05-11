@@ -1,29 +1,45 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { submitSubscriber } from "@/api/forms";
 
 const STORAGE_KEY = "growtiva.subscribers";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) || trimmed.length > 255) {
       toast.error("Please enter a valid email.");
       return;
     }
+
+    setLoading(true);
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const list: string[] = raw ? JSON.parse(raw) : [];
-      if (!list.includes(trimmed)) list.push(trimmed);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      const res = await submitSubscriber({ email: trimmed });
+      if (res.success) {
+        // Also cache locally
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const list: string[] = raw ? JSON.parse(raw) : [];
+          if (!list.includes(trimmed)) list.push(trimmed);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        } catch {
+          /* ignore storage errors */
+        }
+        setSubmittedEmail(trimmed);
+        setEmail("");
+      } else {
+        toast.error(res.error || "Something went wrong. Please try again.");
+      }
     } catch {
-      /* ignore storage errors */
+      toast.error("Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
     }
-    setSubmittedEmail(trimmed);
-    setEmail("");
   };
 
   const unsubscribe = () => {
@@ -91,9 +107,10 @@ const Newsletter = () => {
               />
               <button
                 type="submit"
-                className="text-[12px] tracking-[0.22em] uppercase px-6 py-3 hover:text-accent transition-colors"
+                disabled={loading}
+                className="text-[12px] tracking-[0.22em] uppercase px-6 py-3 hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subscribe →
+                {loading ? "Subscribing…" : "Subscribe →"}
               </button>
             </form>
           </>
