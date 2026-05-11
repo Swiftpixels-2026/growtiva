@@ -159,3 +159,38 @@ export const deleteInnerCircleApplication = (id: string) =>
     method: "DELETE",
     headers: { Authorization: `Bearer ${getToken()}` },
   });
+
+// ─── Listings ─────────────────────────────────────────────────────────────────
+export type Listing = {
+  _id: string;
+  name: string;
+  category: string;
+  city: string;
+  country: string;
+  blurb: string;
+  services: string;
+  email: string;
+  phone: string;
+  url?: string;
+  image?: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getListings = (params?: {
+  search?: string;
+  city?: string;
+  category?: string;
+  tags?: string; // comma-separated
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams(params as Record<string, string>).toString();
+  return apiFetch<PaginatedResponse<Listing>>(
+    `/api/growtiva/listings${q ? `?${q}` : ""}`,
+  );
+};
+
+export const getAllTags = () =>
+  apiFetch<{ tags: string[] }>("/api/growtiva/listings/tags");
