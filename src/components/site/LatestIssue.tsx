@@ -1,4 +1,4 @@
-import cover from "@/assets/issue-01-cover.jpg";
+import cover from "@/assets/picturesforgrowtiva/issue_01.png";
 import { useIssueReader } from "./IssuesProvider";
 import { ISSUES } from "@/data/content";
 import { useGatedDownload } from "@/lib/useGatedDownload";
@@ -12,7 +12,10 @@ const LatestIssue = () => {
   const handleDownload = () => download(issue01);
 
   return (
-    <section id="latest" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
+    <section
+      id="latest"
+      className="py-20 sm:py-28 md:py-40 border-t border-foreground/10"
+    >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-6 order-2 lg:order-1">
@@ -51,8 +54,8 @@ const LatestIssue = () => {
             <div className="rule my-10 max-w-[120px]" />
 
             <p className="text-base text-foreground/75 max-w-lg leading-relaxed">
-              A curated collection of stories, insights, and perspectives from Africans
-              building across industries, cities, and cultures.
+              A curated collection of stories, insights, and perspectives from
+              Africans building across industries, cities, and cultures.
             </p>
             <p className="mt-5 text-base text-foreground/60 max-w-lg italic">
               Featuring founders, operators, and creatives shaping what's next.

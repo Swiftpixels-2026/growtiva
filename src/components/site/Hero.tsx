@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import magazine from "@/assets/magazine-mockup.jpg";
+import magazine from "@/assets/picturesforgrowtiva/hero-image.png";
 import { COUNTRY_SLIDES, ISSUES } from "@/data/content";
 
 const Hero = () => {

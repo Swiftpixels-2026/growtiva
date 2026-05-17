@@ -1,10 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import portrait from "@/assets/community-portrait.jpg";
-import collage2 from "@/assets/community-collage-2.jpg";
-import collage3 from "@/assets/community-collage-3.jpg";
+import portrait from "@/assets/picturesforgrowtiva/Growtiva_Field_Note_01.png";
+import collage2 from "@/assets/picturesforgrowtiva/Growtiva_Field_Note_02.png";
+import collage3 from "@/assets/picturesforgrowtiva/Growtiva_Field_Note_03.png";
+import portrait2 from "@/assets/picturesforgrowtiva/Growtiva_Inner_Circle_01.png";
+import collage22 from "@/assets/picturesforgrowtiva/Growtiva_Inner_Circle_02.png";
+import collage32 from "@/assets/picturesforgrowtiva/Growtiva_Inner_Circle_03.png";
 
-const gallery = [
+const innercirclegallery = [
+  {
+    src: portrait2,
+    alt: "Editorial collage of African creatives and founders",
+  },
+  {
+    src: collage22,
+    alt: "Portraits of African artists, designers and entrepreneurs",
+  },
+  {
+    src: collage32,
+    alt: "African creatives in studios, ateliers and city rooftops",
+  },
+];
+
+const fieldnotesgallery = [
   { src: portrait, alt: "Editorial collage of African creatives and founders" },
   {
     src: collage2,
@@ -21,7 +39,15 @@ const Community = () => {
 
   useEffect(() => {
     const id = setInterval(
-      () => setActive((i) => (i + 1) % gallery.length),
+      () => setActive((i) => (i + 1) % innercirclegallery.length),
+      4500,
+    );
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(
+      () => setActive((i) => (i + 1) % fieldnotesgallery.length),
       4500,
     );
     return () => clearInterval(id);
@@ -36,7 +62,7 @@ const Community = () => {
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-5">
             <div className="aspect-[4/5] overflow-hidden relative bg-foreground/5">
-              {gallery.map((g, i) => (
+              {innercirclegallery.map((g, i) => (
                 <img
                   key={g.src}
                   src={g.src}
@@ -68,7 +94,7 @@ const Community = () => {
               introductions reserved for the few.
             </p>
             <p className="mt-5 text-base text-foreground/75 max-w-xl leading-relaxed">
-              This is where the next chapter is written—quietly, deliberately,
+              This is where the next chapter is written quietly, deliberately,
               and in the company of equals.
             </p>
 
@@ -85,7 +111,7 @@ const Community = () => {
           <div className="flex items-end justify-between mb-6">
             <span className="eyebrow">ICONIC AFRICA</span>
             <div className="flex gap-2">
-              {gallery.map((_, i) => (
+              {fieldnotesgallery.map((_, i) => (
                 <button
                   key={i}
                   aria-label={`Show collage ${i + 1}`}
@@ -98,7 +124,7 @@ const Community = () => {
             </div>
           </div>
           <div className="relative aspect-[16/7] overflow-hidden bg-foreground/5">
-            {gallery.map((g, i) => (
+            {fieldnotesgallery.map((g, i) => (
               <img
                 key={g.src}
                 src={g.src}
