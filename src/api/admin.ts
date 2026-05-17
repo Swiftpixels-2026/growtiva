@@ -60,10 +60,13 @@ export const getSubscribers = (params?: {
   const q = new URLSearchParams(params as Record<string, string>).toString();
   return apiFetch<PaginatedResponse<Subscriber>>(
     `/api/growtiva/subscribers${q ? `?${q}` : ""}`,
+    { headers: { Authorization: `Bearer ${getToken()}` } },
   );
 };
 export const getSubscriber = (id: string) =>
-  apiFetch<Subscriber>(`/api/growtiva/subscribers/${id}`);
+  apiFetch<Subscriber>(`/api/growtiva/subscribers/${id}`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
 export const updateSubscriber = (
   id: string,
   updates: { active?: boolean; name?: string },
@@ -71,9 +74,40 @@ export const updateSubscriber = (
   apiFetch(`/api/growtiva/subscribers/${id}`, {
     method: "PATCH",
     body: JSON.stringify(updates),
+    headers: { Authorization: `Bearer ${getToken()}` },
   });
 export const deleteSubscriber = (id: string) =>
-  apiFetch(`/api/growtiva/subscribers/${id}`, { method: "DELETE" });
+  apiFetch(`/api/growtiva/subscribers/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+
+// ─── Reading Room ─────────────────────────────────────────────────────────────
+export type ReadingRoomEmail = {
+  _id: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getReadingRoomEmails = (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams(params as Record<string, string>).toString();
+  return apiFetch<PaginatedResponse<ReadingRoomEmail>>(
+    `/api/growtiva/reading-room${q ? `?${q}` : ""}`,
+    { headers: { Authorization: `Bearer ${getToken()}` } },
+  );
+};
+
+export const deleteReadingRoomEmail = (id: string) =>
+  apiFetch(`/api/growtiva/reading-room/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+
+
 
 // ─── Advert Requests ──────────────────────────────────────────────────────────
 export type AdvertRequest = {

@@ -6,20 +6,32 @@ import collage3 from "@/assets/community-collage-3.jpg";
 
 const gallery = [
   { src: portrait, alt: "Editorial collage of African creatives and founders" },
-  { src: collage2, alt: "Portraits of African artists, designers and entrepreneurs" },
-  { src: collage3, alt: "African creatives in studios, ateliers and city rooftops" },
+  {
+    src: collage2,
+    alt: "Portraits of African artists, designers and entrepreneurs",
+  },
+  {
+    src: collage3,
+    alt: "African creatives in studios, ateliers and city rooftops",
+  },
 ];
 
 const Community = () => {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setActive((i) => (i + 1) % gallery.length), 4500);
+    const id = setInterval(
+      () => setActive((i) => (i + 1) % gallery.length),
+      4500,
+    );
     return () => clearInterval(id);
   }, []);
 
   return (
-    <section id="community" className="py-20 sm:py-28 md:py-40 border-t border-foreground/10">
+    <section
+      id="community"
+      className="py-20 sm:py-28 md:py-40 border-t border-foreground/10"
+    >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10">
         <div className="grid grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="col-span-12 lg:col-span-5">
@@ -43,7 +55,8 @@ const Community = () => {
           <div className="col-span-12 lg:col-span-7 lg:pl-8">
             <span className="eyebrow">The Inner Circle</span>
             <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl mt-6 leading-[1.02]">
-              A private network <span className="italic text-accent">behind</span> the pages
+              A private network{" "}
+              <span className="italic text-accent">behind</span> the pages
             </h2>
 
             <div className="rule my-10 max-w-[120px]" />
@@ -51,8 +64,8 @@ const Community = () => {
             <p className="text-base text-foreground/75 max-w-xl leading-relaxed">
               The Inner Circle is a curated membership of founders, creatives,
               and cultural architects shaping a new African century. Members
-              receive each issue first, alongside private briefings, salons,
-              and introductions reserved for the few.
+              receive each issue first, alongside private briefings, salons, and
+              introductions reserved for the few.
             </p>
             <p className="mt-5 text-base text-foreground/75 max-w-xl leading-relaxed">
               This is where the next chapter is written—quietly, deliberately,
@@ -70,7 +83,7 @@ const Community = () => {
 
         <div className="mt-20 md:mt-28">
           <div className="flex items-end justify-between mb-6">
-            <span className="eyebrow">Field Notes</span>
+            <span className="eyebrow">ICONIC AFRICA</span>
             <div className="flex gap-2">
               {gallery.map((_, i) => (
                 <button

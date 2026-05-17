@@ -16,22 +16,33 @@ import {
   Mail,
   MapPin,
   Briefcase,
+  BookOpen,
 } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { useDirectory } from "@/lib/businessesStore";
 import { slugify } from "@/lib/slug";
-import { login as apiLogin, logout as apiLogout, isAuthenticated } from "@/api/auth";
+import {
+  login as apiLogin,
+  logout as apiLogout,
+  isAuthenticated,
+} from "@/api/auth";
 import { submitListing } from "@/api/forms";
 import {
   getInnerCircleApplications,
   deleteInnerCircleApplication,
   type InnerCircleApplication,
   type PaginatedResponse,
+  getSubscribers,
+  deleteSubscriber,
+  type Subscriber,
+  getReadingRoomEmails,
+  deleteReadingRoomEmail,
+  type ReadingRoomEmail,
 } from "@/api/admin";
 import type { Business } from "@/data/content";
 
-type AdminTab = "listings" | "inner-circle";
+type AdminTab = "listings" | "inner-circle" | "subscribers" | "reading-room";
 
 const emptyForm: Business = {
   name: "",
@@ -87,6 +98,30 @@ const Admin = () => {
     [applicationsData],
   );
 
+  // Subscribers state & queries
+  const [subQuery, setSubQuery] = useState("");
+  const { data: subscribersData, isLoading: subscribersLoading } = useQuery({
+    queryKey: ["subscribers"],
+    queryFn: () => getSubscribers({ limit: 100 }),
+    enabled: authed && tab === "subscribers",
+  });
+  const subscribers = useMemo(
+    () => subscribersData?.data ?? [],
+    [subscribersData],
+  );
+
+  // Reading Room state & queries
+  const [rrQuery, setRrQuery] = useState("");
+  const { data: readingRoomData, isLoading: readingRoomLoading } = useQuery({
+    queryKey: ["reading-room-emails"],
+    queryFn: () => getReadingRoomEmails({ limit: 100 }),
+    enabled: authed && tab === "reading-room",
+  });
+  const readingRoomEmails = useMemo(
+    () => readingRoomData?.data ?? [],
+    [readingRoomData],
+  );
+
   const loginMutation = useMutation({
     mutationFn: (password: string) => apiLogin(password),
     onSuccess: (res) => {
@@ -103,8 +138,12 @@ const Admin = () => {
   });
 
   const saveListingMutation = useMutation({
-    mutationFn: (payload: Parameters<typeof submitListing>[0] & { payload: Business; editingSlug: string | null }) =>
-      submitListing(payload),
+    mutationFn: (
+      payload: Parameters<typeof submitListing>[0] & {
+        payload: Business;
+        editingSlug: string | null;
+      },
+    ) => submitListing(payload),
     onSuccess: (res, variables) => {
       if (res.success) {
         const { payload, editingSlug } = variables;
@@ -145,6 +184,46 @@ const Admin = () => {
     },
   });
 
+  const removeSubscriberMutation = useMutation({
+    mutationFn: (id: string) => deleteSubscriber(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["subscribers"],
+        (old: PaginatedResponse<Subscriber> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((s: Subscriber) => s._id !== id),
+          };
+        },
+      );
+      toast.success("Subscriber removed");
+    },
+    onError: () => {
+      toast.error("Failed to remove subscriber.");
+    },
+  });
+
+  const removeReadingRoomEmailMutation = useMutation({
+    mutationFn: (id: string) => deleteReadingRoomEmail(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["reading-room-emails"],
+        (old: PaginatedResponse<ReadingRoomEmail> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((r: ReadingRoomEmail) => r._id !== id),
+          };
+        },
+      );
+      toast.success("Email removed from Reading Room");
+    },
+    onError: () => {
+      toast.error("Failed to remove email.");
+    },
+  });
+
   const tryLogin = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate(pw);
@@ -161,6 +240,16 @@ const Admin = () => {
     removeApplicationMutation.mutate(app._id);
   };
 
+  const removeSubscriber = async (sub: Subscriber) => {
+    if (!confirm(`Remove subscriber "${sub.email}"?`)) return;
+    removeSubscriberMutation.mutate(sub._id);
+  };
+
+  const removeReadingRoomEmail = async (item: ReadingRoomEmail) => {
+    if (!confirm(`Remove email "${item.email}" from the Reading Room?`)) return;
+    removeReadingRoomEmailMutation.mutate(item._id);
+  };
+
   const filteredApps = useMemo(() => {
     const q = appQuery.trim().toLowerCase();
     if (!q) return applications;
@@ -173,6 +262,22 @@ const Admin = () => {
     );
   }, [applications, appQuery]);
 
+  const filteredSubscribers = useMemo(() => {
+    const q = subQuery.trim().toLowerCase();
+    if (!q) return subscribers;
+    return subscribers.filter(
+      (s) =>
+        s.email.toLowerCase().includes(q) ||
+        (s.name && s.name.toLowerCase().includes(q)),
+    );
+  }, [subscribers, subQuery]);
+
+  const filteredReadingRoomEmails = useMemo(() => {
+    const q = rrQuery.trim().toLowerCase();
+    if (!q) return readingRoomEmails;
+    return readingRoomEmails.filter((r) => r.email.toLowerCase().includes(q));
+  }, [readingRoomEmails, rrQuery]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return businesses;
@@ -184,7 +289,6 @@ const Admin = () => {
         b.city.toLowerCase().includes(q),
     );
   }, [businesses, query]);
-
 
   const openNew = () => {
     setEditingSlug(null);
@@ -297,12 +401,22 @@ const Admin = () => {
           <div>
             <span className="eyebrow">Admin Panel</span>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl mt-4">
-              {tab === "listings" ? "Manage businesses" : "Inner Circle"}
+              {tab === "listings"
+                ? "Manage businesses"
+                : tab === "inner-circle"
+                  ? "Inner Circle"
+                  : tab === "subscribers"
+                    ? "Subscribers"
+                    : "Reading Room"}
             </h1>
             <p className="mt-3 text-foreground/65 text-sm">
               {tab === "listings"
                 ? `${businesses.length} listings · changes saved on this device.`
-                : `${applications.length} applications received.`}
+                : tab === "inner-circle"
+                  ? `${applications.length} applications received.`
+                  : tab === "subscribers"
+                    ? `${subscribers.length} newsletter subscribers.`
+                    : `${readingRoomEmails.length} unlocked reading room readers.`}
             </p>
           </div>
           <div className="flex gap-3">
@@ -344,6 +458,26 @@ const Admin = () => {
             }`}
           >
             <Users size={14} /> Inner Circle
+          </button>
+          <button
+            onClick={() => setTab("subscribers")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "subscribers"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Mail size={14} /> Subscribers
+          </button>
+          <button
+            onClick={() => setTab("reading-room")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "reading-room"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <BookOpen size={14} /> Reading Room
           </button>
         </div>
 
@@ -389,7 +523,10 @@ const Admin = () => {
                           />
                         ) : (
                           <div className="h-12 w-16 bg-foreground/10 flex items-center justify-center">
-                            <ImageIcon size={16} className="text-foreground/40" />
+                            <ImageIcon
+                              size={16}
+                              className="text-foreground/40"
+                            />
                           </div>
                         )}
                       </td>
@@ -458,7 +595,10 @@ const Admin = () => {
 
             {appsLoading ? (
               <div className="flex items-center justify-center py-20">
-                <Loader2 size={24} className="animate-spin text-foreground/40" />
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
               </div>
             ) : filteredApps.length === 0 ? (
               <div className="border border-foreground/15 p-12 text-center text-foreground/60">
@@ -473,7 +613,9 @@ const Admin = () => {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h3 className="font-serif text-lg leading-tight">{app.name}</h3>
+                        <h3 className="font-serif text-lg leading-tight">
+                          {app.name}
+                        </h3>
                         <div className="flex items-center gap-1.5 mt-1 text-xs text-foreground/60">
                           <Mail size={11} />
                           <span>{app.email}</span>
@@ -514,6 +656,214 @@ const Admin = () => {
             )}
           </>
         )}
+
+        {/* ── Subscribers Tab ── */}
+        {tab === "subscribers" && (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="relative max-w-md flex-1">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+                />
+                <input
+                  value={subQuery}
+                  onChange={(e) => setSubQuery(e.target.value)}
+                  placeholder="Search name or email…"
+                  className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+                />
+              </div>
+              {filteredSubscribers.length > 0 && (
+                <button
+                  onClick={() => {
+                    const emails = filteredSubscribers
+                      .map((s) => s.email)
+                      .join(", ");
+                    navigator.clipboard.writeText(emails);
+                    toast.success("All subscriber emails copied to clipboard!");
+                  }}
+                  className="inline-flex items-center gap-2 border border-foreground/30 px-4 py-2.5 text-[11px] tracking-[0.18em] uppercase hover:border-foreground hover:bg-foreground/5 transition-colors"
+                >
+                  <Mail size={12} /> Copy All Emails
+                </button>
+              )}
+            </div>
+
+            {subscribersLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
+              </div>
+            ) : filteredSubscribers.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No subscribers found.
+              </div>
+            ) : (
+              <div className="border border-foreground/15 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-secondary/40 text-[10px] tracking-[0.22em] uppercase text-foreground/60">
+                    <tr>
+                      <th className="text-left p-3">Email</th>
+                      <th className="text-left p-3">Joined Date</th>
+                      <th className="text-right p-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredSubscribers.map((sub) => (
+                      <tr
+                        key={sub._id}
+                        className="border-t border-foreground/10 hover:bg-foreground/[0.01] transition-colors"
+                      >
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm text-foreground/75">
+                              {sub.email}
+                            </span>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(sub.email);
+                                toast.success("Email copied!");
+                              }}
+                              className="text-foreground/40 hover:text-foreground p-1 rounded hover:bg-foreground/5 transition-all text-[10px]"
+                              title="Copy email"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </td>
+                        
+                        <td className="p-3 text-foreground/60 text-xs">
+                          {new Date(sub.createdAt).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td className="p-3 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => removeSubscriber(sub)}
+                            className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-destructive/40 text-destructive px-3 py-2 hover:bg-destructive hover:text-destructive-foreground transition-all"
+                          >
+                            <Trash2 size={12} /> Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Reading Room Tab ── */}
+        {tab === "reading-room" && (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="relative max-w-md flex-1">
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+                />
+                <input
+                  value={rrQuery}
+                  onChange={(e) => setRrQuery(e.target.value)}
+                  placeholder="Search email…"
+                  className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+                />
+              </div>
+              {filteredReadingRoomEmails.length > 0 && (
+                <button
+                  onClick={() => {
+                    const emails = filteredReadingRoomEmails
+                      .map((r) => r.email)
+                      .join(", ");
+                    navigator.clipboard.writeText(emails);
+                    toast.success(
+                      "All Reading Room emails copied to clipboard!",
+                    );
+                  }}
+                  className="inline-flex items-center gap-2 border border-foreground/30 px-4 py-2.5 text-[11px] tracking-[0.18em] uppercase hover:border-foreground hover:bg-foreground/5 transition-colors"
+                >
+                  <BookOpen size={12} /> Copy All Emails
+                </button>
+              )}
+            </div>
+
+            {readingRoomLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
+              </div>
+            ) : filteredReadingRoomEmails.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No Reading Room readers found.
+              </div>
+            ) : (
+              <div className="border border-foreground/15 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-secondary/40 text-[10px] tracking-[0.22em] uppercase text-foreground/60">
+                    <tr>
+                      <th className="text-left p-3">Email Address</th>
+                      <th className="text-left p-3">Unlocked At</th>
+                      <th className="text-right p-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredReadingRoomEmails.map((item) => (
+                      <tr
+                        key={item._id}
+                        className="border-t border-foreground/10 hover:bg-foreground/[0.01] transition-colors"
+                      >
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm text-foreground/80">
+                              {item.email}
+                            </span>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(item.email);
+                                toast.success("Email copied!");
+                              }}
+                              className="text-foreground/40 hover:text-foreground p-1 rounded hover:bg-foreground/5 transition-all text-[10px]"
+                              title="Copy email"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        </td>
+                        <td className="p-3 text-foreground/60 text-xs">
+                          {new Date(item.createdAt).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
+                        </td>
+                        <td className="p-3 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => removeReadingRoomEmail(item)}
+                            className="inline-flex items-center gap-1 text-[10px] tracking-[0.22em] uppercase border border-destructive/40 text-destructive px-3 py-2 hover:bg-destructive hover:text-destructive-foreground transition-all"
+                          >
+                            <Trash2 size={12} /> Remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {open && (
@@ -540,7 +890,9 @@ const Admin = () => {
             </div>
             <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-y-auto custom-scrollbar">
               <div className="sm:col-span-2 flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Name *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Name *
+                </label>
                 <input
                   required
                   placeholder="Business Name"
@@ -550,17 +902,23 @@ const Admin = () => {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Category *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Category *
+                </label>
                 <input
                   required
                   placeholder="e.g. Design, Tech"
                   value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value })
+                  }
                   className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">City *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  City *
+                </label>
                 <input
                   required
                   placeholder="City"
@@ -570,17 +928,23 @@ const Admin = () => {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Country *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Country *
+                </label>
                 <input
                   required
                   placeholder="Country"
                   value={form.country}
-                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, country: e.target.value })
+                  }
                   className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none w-full"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Tags</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Tags
+                </label>
                 <input
                   placeholder="comma-separated"
                   value={tagsInput}
@@ -589,7 +953,9 @@ const Admin = () => {
                 />
               </div>
               <div className="sm:col-span-2 flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Short blurb *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Short blurb *
+                </label>
                 <textarea
                   required
                   rows={2}
@@ -600,18 +966,24 @@ const Admin = () => {
                 />
               </div>
               <div className="sm:col-span-2 flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Services *</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Services *
+                </label>
                 <textarea
                   required
                   rows={3}
                   placeholder="List the services offered..."
                   value={form.services}
-                  onChange={(e) => setForm({ ...form, services: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, services: e.target.value })
+                  }
                   className="bg-transparent border-b border-foreground/30 focus:border-foreground py-2 outline-none resize-none w-full"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Email</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Email
+                </label>
                 <input
                   type="email"
                   placeholder="email@example.com"
@@ -621,7 +993,9 @@ const Admin = () => {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Phone</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Phone
+                </label>
                 <input
                   placeholder="+123..."
                   value={form.phone ?? ""}
@@ -630,7 +1004,9 @@ const Admin = () => {
                 />
               </div>
               <div className="sm:col-span-2 flex flex-col gap-1.5">
-                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">Website URL</label>
+                <label className="text-[10px] tracking-[0.22em] uppercase text-foreground/50">
+                  Website URL
+                </label>
                 <input
                   placeholder="https://..."
                   value={form.url ?? ""}

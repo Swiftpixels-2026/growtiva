@@ -28,6 +28,26 @@ export async function submitSubscriber(data: {
   }
 }
 
+// ─── Reading Room ────────────────────────────────────────────────────────────
+export async function submitReadingRoom(data: {
+  email: string;
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/reading-room`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}
+
+
 // ─── Advert Request ───────────────────────────────────────────────────────────
 export async function submitAdvertRequest(data: {
   full_name: string;
