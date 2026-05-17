@@ -19,6 +19,7 @@ import {
   BookOpen,
   FileText,
   Inbox,
+  Calendar,
 } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
@@ -47,10 +48,13 @@ import {
   getLetters,
   deleteLetter,
   type Letter,
+  getEventRsvps,
+  deleteEventRsvp,
+  type EventRsvp,
 } from "@/api/admin";
 import type { Business } from "@/data/content";
 
-type AdminTab = "listings" | "inner-circle" | "subscribers" | "reading-room" | "applications" | "letters";
+type AdminTab = "listings" | "inner-circle" | "subscribers" | "reading-room" | "applications" | "letters" | "events";
 
 const emptyForm: Business = {
   name: "",
@@ -151,6 +155,18 @@ const Admin = () => {
   const adminLetters = useMemo(
     () => lettersData?.data ?? [],
     [lettersData],
+  );
+
+  // Events state & queries
+  const [eventsQuery, setEventsQuery] = useState("");
+  const { data: eventsData, isLoading: eventsLoading } = useQuery({
+    queryKey: ["admin-events"],
+    queryFn: () => getEventRsvps({ limit: 100 }),
+    enabled: authed && tab === "events",
+  });
+  const adminEvents = useMemo(
+    () => eventsData?.data ?? [],
+    [eventsData],
   );
 
   const loginMutation = useMutation({
@@ -294,6 +310,26 @@ const Admin = () => {
     },
   });
 
+  const removeEventMutation = useMutation({
+    mutationFn: (id: string) => deleteEventRsvp(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["admin-events"],
+        (old: PaginatedResponse<EventRsvp> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((e: EventRsvp) => e._id !== id),
+          };
+        },
+      );
+      toast.success("Event RSVP removed");
+    },
+    onError: () => {
+      toast.error("Failed to remove RSVP.");
+    },
+  });
+
   const tryLogin = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate(pw);
@@ -328,6 +364,11 @@ const Admin = () => {
   const removeAdminLetter = async (letter: Letter) => {
     if (!confirm(`Remove letter from "${letter.name}"?`)) return;
     removeLetterMutation.mutate(letter._id);
+  };
+
+  const removeAdminEvent = async (event: EventRsvp) => {
+    if (!confirm(`Remove RSVP from "${event.name}" for "${event.title}"?`)) return;
+    removeEventMutation.mutate(event._id);
   };
 
   const filteredApps = useMemo(() => {
@@ -382,6 +423,17 @@ const Admin = () => {
         l.subject.toLowerCase().includes(q),
     );
   }, [adminLetters, lettersQuery]);
+
+  const filteredEvents = useMemo(() => {
+    const q = eventsQuery.trim().toLowerCase();
+    if (!q) return adminEvents;
+    return adminEvents.filter(
+      (e) =>
+        e.name.toLowerCase().includes(q) ||
+        e.email.toLowerCase().includes(q) ||
+        e.title.toLowerCase().includes(q)
+    );
+  }, [adminEvents, eventsQuery]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -516,7 +568,9 @@ const Admin = () => {
                       ? "Applications"
                       : tab === "letters"
                         ? "Letters"
-                        : "Reading Room"}
+                        : tab === "events"
+                          ? "Events"
+                          : "Reading Room"}
             </h1>
             <p className="mt-3 text-foreground/65 text-sm">
               {tab === "listings"
@@ -529,7 +583,9 @@ const Admin = () => {
                       ? `${adminApplications.length} directory applications received.`
                       : tab === "letters"
                         ? `${adminLetters.length} letters received.`
-                        : `${readingRoomEmails.length} unlocked reading room readers.`}
+                        : tab === "events"
+                          ? `${adminEvents.length} event RSVPs received.`
+                          : `${readingRoomEmails.length} unlocked reading room readers.`}
             </p>
           </div>
           <div className="flex gap-3">
@@ -611,6 +667,16 @@ const Admin = () => {
             }`}
           >
             <FileText size={14} /> Letters
+          </button>
+          <button
+            onClick={() => setTab("events")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "events"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Calendar size={14} /> Events
           </button>
         </div>
 
@@ -1144,6 +1210,84 @@ const Admin = () => {
                       <span>{letter.city}</span>
                       <span>
                         {new Date(letter.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Events Tab ── */}
+        {tab === "events" && (
+          <>
+            <div className="relative max-w-md mb-6">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+              />
+              <input
+                value={eventsQuery}
+                onChange={(e) => setEventsQuery(e.target.value)}
+                placeholder="Search name, email, event title…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+              />
+            </div>
+
+            {eventsLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No event RSVPs found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredEvents.map((ev) => (
+                  <div
+                    key={ev._id}
+                    className="border border-foreground/15 p-5 flex flex-col gap-3 hover:border-foreground/30 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-serif text-lg leading-tight">
+                          {ev.name}
+                        </h3>
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-foreground/60">
+                          <Mail size={11} />
+                          <span>{ev.email}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeAdminEvent(ev)}
+                        className="shrink-0 p-1.5 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Remove RSVP"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="text-sm font-medium text-foreground/90 border-t border-foreground/10 pt-2 mt-1">
+                      Event: {ev.title}
+                    </div>
+
+                    <p className="text-sm text-foreground/75 leading-relaxed line-clamp-4">
+                      {ev.note}
+                    </p>
+
+                    <div className="mt-auto pt-2 border-t border-foreground/10 flex justify-between items-center text-[10px] tracking-[0.15em] uppercase text-foreground/40">
+                      <span>RSVP Date</span>
+                      <span>
+                        {new Date(ev.createdAt).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",

@@ -3,6 +3,7 @@ import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { EVENTS } from "@/data/community";
 import { useI18n } from "@/lib/i18n";
+import { submitEventRsvp } from "@/api/forms";
 import { toast } from "sonner";
 import { Calendar, MapPin } from "lucide-react";
 
@@ -16,7 +17,9 @@ const Events = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent, title: string) => {
     e.preventDefault();
     if (
       !form.name.trim() ||
@@ -25,9 +28,18 @@ const Events = () => {
       toast.error("Please add your name and a valid email.");
       return;
     }
-    toast.success("RSVP received. We'll be in touch.");
-    setForm({ name: "", email: "", note: "" });
-    setOpen(null);
+
+    setIsSubmitting(true);
+    const res = await submitEventRsvp({ ...form, title });
+    setIsSubmitting(false);
+
+    if (res.success) {
+      toast.success("RSVP received. We'll be in touch.");
+      setForm({ name: "", email: "", note: "" });
+      setOpen(null);
+    } else {
+      toast.error(res.error || "Failed to submit RSVP. Please try again.");
+    }
   };
 
   return (
@@ -94,7 +106,7 @@ const Events = () => {
 
                 {isOpen && (
                   <form
-                    onSubmit={submit}
+                    onSubmit={(e) => handleSubmit(e, ev.title)}
                     className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-foreground/15 pt-6"
                   >
                     <input
@@ -130,9 +142,10 @@ const Events = () => {
                     />
                     <button
                       type="submit"
-                      className="md:col-span-2 inline-flex items-center justify-center bg-foreground text-background px-6 py-3 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors w-full sm:w-fit"
+                      disabled={isSubmitting}
+                      className="md:col-span-2 inline-flex items-center justify-center bg-foreground text-background px-6 py-3 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors w-full sm:w-fit disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Confirm RSVP →
+                      {isSubmitting ? "Confirming..." : "Confirm RSVP →"}
                     </button>
                   </form>
                 )}

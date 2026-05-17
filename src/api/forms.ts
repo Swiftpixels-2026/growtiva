@@ -217,3 +217,25 @@ export async function submitLetter(data: {
     };
   }
 }
+
+// ─── Events (RSVP) ────────────────────────────────────────────────────────────
+export async function submitEventRsvp(data: {
+  name: string;
+  email: string;
+  title: string;
+  note: string;
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}

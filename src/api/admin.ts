@@ -287,3 +287,31 @@ export const deleteLetter = (id: string) =>
     method: "DELETE",
     headers: { Authorization: `Bearer ${getToken()}` },
   });
+
+// ─── Events (RSVP) ────────────────────────────────────────────────────────────
+export type EventRsvp = {
+  _id: string;
+  name: string;
+  email: string;
+  title: string;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getEventRsvps = (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams(params as Record<string, string>).toString();
+  return apiFetch<PaginatedResponse<EventRsvp>>(
+    `/api/growtiva/events${q ? `?${q}` : ""}`,
+    { headers: { Authorization: `Bearer ${getToken()}` } },
+  );
+};
+
+export const deleteEventRsvp = (id: string) =>
+  apiFetch(`/api/growtiva/events/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
