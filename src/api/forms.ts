@@ -170,3 +170,50 @@ export async function submitListing(data: {
     };
   }
 }
+
+// ─── Applications ─────────────────────────────────────────────────────────────
+export async function submitApplication(data: {
+  name: string;
+  email: string;
+  business: string;
+  category: string;
+  city: string;
+  note: string;
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/applications`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}
+
+// ─── Letters ──────────────────────────────────────────────────────────────────
+export async function submitLetter(data: {
+  name: string;
+  email: string;
+  city: string;
+  subject: string;
+  body: string;
+}): Promise<ApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/api/growtiva/letters`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch {
+    return {
+      success: false,
+      error: "Network error. Please check your connection.",
+    };
+  }
+}

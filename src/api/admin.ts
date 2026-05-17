@@ -228,3 +228,62 @@ export const getListings = (params?: {
 
 export const getAllTags = () =>
   apiFetch<{ tags: string[] }>("/api/growtiva/listings/tags");
+
+// ─── Applications ─────────────────────────────────────────────────────────────
+export type Application = {
+  _id: string;
+  name: string;
+  email: string;
+  business: string;
+  category: string;
+  city: string;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getApplications = (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams(params as Record<string, string>).toString();
+  return apiFetch<PaginatedResponse<Application>>(
+    `/api/growtiva/applications${q ? `?${q}` : ""}`,
+    { headers: { Authorization: `Bearer ${getToken()}` } },
+  );
+};
+
+export const deleteApplication = (id: string) =>
+  apiFetch(`/api/growtiva/applications/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+
+// ─── Letters ──────────────────────────────────────────────────────────────────
+export type Letter = {
+  _id: string;
+  name: string;
+  email: string;
+  city: string;
+  subject: string;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getLetters = (params?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const q = new URLSearchParams(params as Record<string, string>).toString();
+  return apiFetch<PaginatedResponse<Letter>>(
+    `/api/growtiva/letters${q ? `?${q}` : ""}`,
+    { headers: { Authorization: `Bearer ${getToken()}` } },
+  );
+};
+
+export const deleteLetter = (id: string) =>
+  apiFetch(`/api/growtiva/letters/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });

@@ -3,11 +3,23 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { Search, X, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { useDirectory } from "@/lib/businessesStore";
+import { submitApplication } from "@/api/forms";
 import { slugify } from "@/lib/slug";
 import { currencyFor } from "@/lib/currency";
 import CityMap from "./CityMap";
 
-const FEATURED = ["Technology", "Music", "Business", "Automobile", "Restaurant", "Hospitality", "Fashion", "Coffee", "Design", "Education"];
+const FEATURED = [
+  "Technology",
+  "Music",
+  "Business",
+  "Automobile",
+  "Restaurant",
+  "Hospitality",
+  "Fashion",
+  "Coffee",
+  "Design",
+  "Education",
+];
 
 const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   const { businesses: BUSINESSES } = useDirectory();
@@ -15,11 +27,21 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [view, setView] = useState<"list" | "map">("list");
-  const [form, setForm] = useState({ name: "", email: "", business: "", category: "", city: "", note: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    business: "",
+    category: "",
+    city: "",
+    note: "",
+  });
 
   const otherCategories = useMemo(
-    () => Array.from(new Set(BUSINESSES.map((b) => b.category))).filter((c) => !FEATURED.includes(c)),
-    [BUSINESSES]
+    () =>
+      Array.from(new Set(BUSINESSES.map((b) => b.category))).filter(
+        (c) => !FEATURED.includes(c),
+      ),
+    [BUSINESSES],
   );
   const allCategories = [...FEATURED, ...otherCategories];
 
@@ -32,7 +54,7 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         b.name.toLowerCase().includes(q) ||
         b.city.toLowerCase().includes(q) ||
         b.country.toLowerCase().includes(q) ||
-        (b.tags ?? []).some((t) => t.toLowerCase().includes(q))
+        (b.tags ?? []).some((t) => t.toLowerCase().includes(q)),
     );
   }, [query, BUSINESSES]);
 
@@ -68,7 +90,9 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
     return base;
   }, [filter, tag, searchMatches]);
 
-  const submit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.business.trim()) {
       toast.error("Please complete the required fields.");
@@ -78,8 +102,24 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
       toast.error("Please enter a valid email.");
       return;
     }
-    toast.success("Application received. Our editors will be in touch.");
-    setForm({ name: "", email: "", business: "", category: "", city: "", note: "" });
+
+    setIsSubmitting(true);
+    const res = await submitApplication(form);
+    setIsSubmitting(false);
+
+    if (res.success) {
+      toast.success("Application received. Our editors will be in touch.");
+      setForm({
+        name: "",
+        email: "",
+        business: "",
+        category: "",
+        city: "",
+        note: "",
+      });
+    } else {
+      toast.error(res.error || "Failed to submit application. Please try again.");
+    }
   };
 
   return (
@@ -91,10 +131,13 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8 mb-10 md:mb-16">
           <div>
             <span className="eyebrow">The Directory</span>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl mt-4 md:mt-5 leading-[1.05]">Business Directory</h1>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl mt-4 md:mt-5 leading-[1.05]">
+              Business Directory
+            </h1>
           </div>
           <p className="max-w-md text-foreground/70 text-sm sm:text-base">
-            A vetted index of African operators, makers, and studios shaping the modern continent.
+            A vetted index of African operators, makers, and studios shaping the
+            modern continent.
           </p>
         </div>
 
@@ -102,7 +145,10 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         <div className="sticky top-16 md:top-20 z-30 -mx-4 sm:-mx-6 md:-mx-10 px-4 sm:px-6 md:px-10 py-3 md:py-4 bg-background/95 backdrop-blur-md border-b border-foreground/10 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.15)] mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 max-w-xl">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 pointer-events-none"
+              />
               <input
                 type="search"
                 value={query}
@@ -126,7 +172,9 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
               <button
                 onClick={() => setView("list")}
                 className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] tracking-[0.22em] uppercase transition-colors ${
-                  view === "list" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+                  view === "list"
+                    ? "bg-foreground text-background"
+                    : "hover:bg-foreground/5"
                 }`}
                 aria-pressed={view === "list"}
               >
@@ -135,7 +183,9 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
               <button
                 onClick={() => setView("map")}
                 className={`inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] tracking-[0.22em] uppercase transition-colors border-l border-foreground/20 ${
-                  view === "map" ? "bg-foreground text-background" : "hover:bg-foreground/5"
+                  view === "map"
+                    ? "bg-foreground text-background"
+                    : "hover:bg-foreground/5"
                 }`}
                 aria-pressed={view === "map"}
               >
@@ -166,7 +216,9 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                     <span>{c}</span>
                     <span
                       className={`text-[9px] sm:text-[10px] tracking-normal px-1.5 py-0.5 rounded-sm ${
-                        active ? "bg-background/20 text-background" : "bg-foreground/10 text-foreground/70"
+                        active
+                          ? "bg-background/20 text-background"
+                          : "bg-foreground/10 text-foreground/70"
                       }`}
                     >
                       {count}
@@ -225,7 +277,9 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
         {filtered.length === 0 ? (
           <div className="border border-foreground/15 p-8 sm:p-12 text-center">
             <p className="font-serif text-xl sm:text-2xl">No matches found</p>
-            <p className="text-sm text-foreground/60 mt-2">Try a different search term, tag, or category.</p>
+            <p className="text-sm text-foreground/60 mt-2">
+              Try a different search term, tag, or category.
+            </p>
           </div>
         ) : view === "map" ? (
           <CityMap businesses={filtered} />
@@ -238,9 +292,15 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                 className="group p-5 sm:p-7 md:p-8 border-r border-b border-foreground/15 hover:bg-foreground hover:text-background transition-colors duration-500 flex flex-col justify-between min-h-[200px] sm:min-h-[220px]"
               >
                 <div>
-                  <span className="eyebrow group-hover:text-background/60">{b.category}</span>
-                  <h3 className="font-serif text-xl sm:text-2xl md:text-3xl mt-3 sm:mt-4">{b.name}</h3>
-                  <p className="mt-2 sm:mt-3 text-sm opacity-80 max-w-[34ch]">{b.blurb}</p>
+                  <span className="eyebrow group-hover:text-background/60">
+                    {b.category}
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl md:text-3xl mt-3 sm:mt-4">
+                    {b.name}
+                  </h3>
+                  <p className="mt-2 sm:mt-3 text-sm opacity-80 max-w-[34ch]">
+                    {b.blurb}
+                  </p>
                   {b.tags && b.tags.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {b.tags.slice(0, 3).map((t) => (
@@ -255,14 +315,21 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
                   )}
                 </div>
                 <div className="mt-5 sm:mt-6 flex items-center justify-between text-[10px] sm:text-[11px] tracking-[0.22em] uppercase opacity-70">
-                  <span className="truncate pr-2">{b.city}, {b.country}</span>
+                  <span className="truncate pr-2">
+                    {b.city}, {b.country}
+                  </span>
                   <span className="flex items-center gap-2 shrink-0">
                     {currencyFor(b.country) && (
-                      <span className="text-accent" title={currencyFor(b.country)?.name}>
+                      <span
+                        className="text-accent"
+                        title={currencyFor(b.country)?.name}
+                      >
                         {currencyFor(b.country)!.symbol}
                       </span>
                     )}
-                    <span className="group-hover:text-accent transition-colors">View →</span>
+                    <span className="group-hover:text-accent transition-colors">
+                      View →
+                    </span>
                   </span>
                 </div>
               </Link>
@@ -275,35 +342,72 @@ const Directory = ({ embedded = false }: { embedded?: boolean }) => {
           <div className="col-span-12 lg:col-span-5">
             <span className="eyebrow">Get Listed</span>
             <h3 className="font-serif text-3xl md:text-5xl mt-5 leading-[1.05]">
-              Build something <span className="italic text-accent">remarkable</span>?
+              Build something{" "}
+              <span className="italic text-accent">remarkable</span>?
             </h3>
             <p className="mt-6 text-foreground/75 max-w-md leading-relaxed">
-              We curate a small, intentional directory each issue. Tell us what you're building—we read every submission.
+              We curate a small, intentional directory each issue. Tell us what
+              you're building—we read every submission.
             </p>
           </div>
 
-          <form onSubmit={submit} className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <input required maxLength={120} placeholder="Your name *" value={form.name}
+          <form
+            onSubmit={submit}
+            className="col-span-12 lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5"
+          >
+            <input
+              required
+              maxLength={120}
+              placeholder="Your name *"
+              value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors" />
-            <input required type="email" maxLength={255} placeholder="Email *" value={form.email}
+              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors"
+            />
+            <input
+              required
+              type="email"
+              maxLength={255}
+              placeholder="Email *"
+              value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors" />
-            <input required maxLength={120} placeholder="Business name *" value={form.business}
+              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors"
+            />
+            <input
+              required
+              maxLength={120}
+              placeholder="Business name *"
+              value={form.business}
               onChange={(e) => setForm({ ...form, business: e.target.value })}
-              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors" />
-            <input maxLength={120} placeholder="Category" value={form.category}
+              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors"
+            />
+            <input
+              maxLength={120}
+              placeholder="Category"
+              value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors" />
-            <input maxLength={120} placeholder="City, Country" value={form.city}
+              className="bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors"
+            />
+            <input
+              maxLength={120}
+              placeholder="City, Country"
+              value={form.city}
               onChange={(e) => setForm({ ...form, city: e.target.value })}
-              className="md:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors" />
-            <textarea maxLength={1000} rows={3} placeholder="Tell us what you're building" value={form.note}
+              className="md:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 transition-colors"
+            />
+            <textarea
+              maxLength={1000}
+              rows={3}
+              placeholder="Tell us what you're building"
+              value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })}
-              className="md:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 resize-none transition-colors" />
-            <button type="submit"
-              className="md:col-span-2 mt-4 inline-flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors w-full sm:w-fit">
-              Apply for Listing →
+              className="md:col-span-2 bg-transparent border-b border-foreground/30 focus:border-foreground py-3 outline-none text-base placeholder:text-foreground/40 resize-none transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="md:col-span-2 mt-4 inline-flex items-center justify-center gap-3 bg-foreground text-background px-8 py-4 text-[12px] tracking-[0.22em] uppercase hover:bg-accent hover:text-foreground transition-colors w-full sm:w-fit disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Applying..." : "Apply for Listing →"}
             </button>
           </form>
         </div>

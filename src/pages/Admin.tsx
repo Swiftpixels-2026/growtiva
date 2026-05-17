@@ -17,6 +17,8 @@ import {
   MapPin,
   Briefcase,
   BookOpen,
+  FileText,
+  Inbox,
 } from "lucide-react";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
@@ -39,10 +41,16 @@ import {
   getReadingRoomEmails,
   deleteReadingRoomEmail,
   type ReadingRoomEmail,
+  getApplications,
+  deleteApplication,
+  type Application,
+  getLetters,
+  deleteLetter,
+  type Letter,
 } from "@/api/admin";
 import type { Business } from "@/data/content";
 
-type AdminTab = "listings" | "inner-circle" | "subscribers" | "reading-room";
+type AdminTab = "listings" | "inner-circle" | "subscribers" | "reading-room" | "applications" | "letters";
 
 const emptyForm: Business = {
   name: "",
@@ -120,6 +128,29 @@ const Admin = () => {
   const readingRoomEmails = useMemo(
     () => readingRoomData?.data ?? [],
     [readingRoomData],
+  );
+  // Applications state & queries
+  const [applicationsQuery, setApplicationsQuery] = useState("");
+  const { data: applicationsAdminData, isLoading: applicationsAdminLoading } = useQuery({
+    queryKey: ["admin-applications"],
+    queryFn: () => getApplications({ limit: 100 }),
+    enabled: authed && tab === "applications",
+  });
+  const adminApplications = useMemo(
+    () => applicationsAdminData?.data ?? [],
+    [applicationsAdminData],
+  );
+
+  // Letters state & queries
+  const [lettersQuery, setLettersQuery] = useState("");
+  const { data: lettersData, isLoading: lettersLoading } = useQuery({
+    queryKey: ["letters"],
+    queryFn: () => getLetters({ limit: 100 }),
+    enabled: authed && tab === "letters",
+  });
+  const adminLetters = useMemo(
+    () => lettersData?.data ?? [],
+    [lettersData],
   );
 
   const loginMutation = useMutation({
@@ -223,6 +254,45 @@ const Admin = () => {
       toast.error("Failed to remove email.");
     },
   });
+  const removeAdminApplicationMutation = useMutation({
+    mutationFn: (id: string) => deleteApplication(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["admin-applications"],
+        (old: PaginatedResponse<Application> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((a: Application) => a._id !== id),
+          };
+        },
+      );
+      toast.success("Application removed");
+    },
+    onError: () => {
+      toast.error("Failed to remove application.");
+    },
+  });
+
+  const removeLetterMutation = useMutation({
+    mutationFn: (id: string) => deleteLetter(id),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(
+        ["letters"],
+        (old: PaginatedResponse<Letter> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.filter((l: Letter) => l._id !== id),
+          };
+        },
+      );
+      toast.success("Letter removed");
+    },
+    onError: () => {
+      toast.error("Failed to remove letter.");
+    },
+  });
 
   const tryLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,6 +318,16 @@ const Admin = () => {
   const removeReadingRoomEmail = async (item: ReadingRoomEmail) => {
     if (!confirm(`Remove email "${item.email}" from the Reading Room?`)) return;
     removeReadingRoomEmailMutation.mutate(item._id);
+  };
+
+  const removeAdminApplication = async (app: Application) => {
+    if (!confirm(`Remove application from "${app.name}"?`)) return;
+    removeAdminApplicationMutation.mutate(app._id);
+  };
+
+  const removeAdminLetter = async (letter: Letter) => {
+    if (!confirm(`Remove letter from "${letter.name}"?`)) return;
+    removeLetterMutation.mutate(letter._id);
   };
 
   const filteredApps = useMemo(() => {
@@ -277,6 +357,31 @@ const Admin = () => {
     if (!q) return readingRoomEmails;
     return readingRoomEmails.filter((r) => r.email.toLowerCase().includes(q));
   }, [readingRoomEmails, rrQuery]);
+
+  const filteredAdminApplications = useMemo(() => {
+    const q = applicationsQuery.trim().toLowerCase();
+    if (!q) return adminApplications;
+    return adminApplications.filter(
+      (a) =>
+        a.name.toLowerCase().includes(q) ||
+        a.email.toLowerCase().includes(q) ||
+        a.city.toLowerCase().includes(q) ||
+        a.business.toLowerCase().includes(q) ||
+        a.category.toLowerCase().includes(q),
+    );
+  }, [adminApplications, applicationsQuery]);
+
+  const filteredLetters = useMemo(() => {
+    const q = lettersQuery.trim().toLowerCase();
+    if (!q) return adminLetters;
+    return adminLetters.filter(
+      (l) =>
+        l.name.toLowerCase().includes(q) ||
+        l.email.toLowerCase().includes(q) ||
+        l.city.toLowerCase().includes(q) ||
+        l.subject.toLowerCase().includes(q),
+    );
+  }, [adminLetters, lettersQuery]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -407,7 +512,11 @@ const Admin = () => {
                   ? "Inner Circle"
                   : tab === "subscribers"
                     ? "Subscribers"
-                    : "Reading Room"}
+                    : tab === "applications"
+                      ? "Applications"
+                      : tab === "letters"
+                        ? "Letters"
+                        : "Reading Room"}
             </h1>
             <p className="mt-3 text-foreground/65 text-sm">
               {tab === "listings"
@@ -416,7 +525,11 @@ const Admin = () => {
                   ? `${applications.length} applications received.`
                   : tab === "subscribers"
                     ? `${subscribers.length} newsletter subscribers.`
-                    : `${readingRoomEmails.length} unlocked reading room readers.`}
+                    : tab === "applications"
+                      ? `${adminApplications.length} directory applications received.`
+                      : tab === "letters"
+                        ? `${adminLetters.length} letters received.`
+                        : `${readingRoomEmails.length} unlocked reading room readers.`}
             </p>
           </div>
           <div className="flex gap-3">
@@ -478,6 +591,26 @@ const Admin = () => {
             }`}
           >
             <Mail size={14} /> Email Subscribers
+          </button>
+          <button
+            onClick={() => setTab("applications")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "applications"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Inbox size={14} /> Applications
+          </button>
+          <button
+            onClick={() => setTab("letters")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "letters"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <FileText size={14} /> Letters
           </button>
         </div>
 
@@ -860,6 +993,165 @@ const Admin = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Applications Tab ── */}
+        {tab === "applications" && (
+          <>
+            <div className="relative max-w-md mb-6">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+              />
+              <input
+                value={applicationsQuery}
+                onChange={(e) => setApplicationsQuery(e.target.value)}
+                placeholder="Search name, email, business, city…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+              />
+            </div>
+
+            {applicationsAdminLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
+              </div>
+            ) : filteredAdminApplications.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No directory applications found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredAdminApplications.map((app) => (
+                  <div
+                    key={app._id}
+                    className="border border-foreground/15 p-5 flex flex-col gap-3 hover:border-foreground/30 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-serif text-lg leading-tight">
+                          {app.name}
+                        </h3>
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-foreground/60">
+                          <Mail size={11} />
+                          <span>{app.email}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeAdminApplication(app)}
+                        className="shrink-0 p-1.5 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Remove application"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground/70">
+                      <span className="inline-flex items-center gap-1">
+                        <Briefcase size={11} /> {app.business}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin size={11} /> {app.city}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-foreground/75 leading-relaxed line-clamp-3">
+                      {app.note}
+                    </p>
+
+                    <div className="mt-auto pt-2 border-t border-foreground/10 text-[10px] tracking-[0.15em] uppercase text-foreground/40">
+                      {app.category} ·{" "}
+                      {new Date(app.createdAt).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ── Letters Tab ── */}
+        {tab === "letters" && (
+          <>
+            <div className="relative max-w-md mb-6">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40"
+              />
+              <input
+                value={lettersQuery}
+                onChange={(e) => setLettersQuery(e.target.value)}
+                placeholder="Search name, email, subject…"
+                className="w-full bg-background border border-foreground/20 focus:border-foreground pl-10 pr-3 py-2.5 outline-none text-sm"
+              />
+            </div>
+
+            {lettersLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2
+                  size={24}
+                  className="animate-spin text-foreground/40"
+                />
+              </div>
+            ) : filteredLetters.length === 0 ? (
+              <div className="border border-foreground/15 p-12 text-center text-foreground/60">
+                No letters found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filteredLetters.map((letter) => (
+                  <div
+                    key={letter._id}
+                    className="border border-foreground/15 p-5 flex flex-col gap-3 hover:border-foreground/30 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-serif text-lg leading-tight">
+                          {letter.name}
+                        </h3>
+                        <div className="flex items-center gap-1.5 mt-1 text-xs text-foreground/60">
+                          <Mail size={11} />
+                          <span>{letter.email}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeAdminLetter(letter)}
+                        className="shrink-0 p-1.5 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Remove letter"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+
+                    <div className="text-sm font-medium text-foreground/90 border-t border-foreground/10 pt-2 mt-1">
+                      {letter.subject}
+                    </div>
+
+                    <p className="text-sm text-foreground/75 leading-relaxed line-clamp-4 italic">
+                      "{letter.body}"
+                    </p>
+
+                    <div className="mt-auto pt-2 border-t border-foreground/10 flex justify-between items-center text-[10px] tracking-[0.15em] uppercase text-foreground/40">
+                      <span>{letter.city}</span>
+                      <span>
+                        {new Date(letter.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </>
