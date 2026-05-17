@@ -460,16 +460,6 @@ const Admin = () => {
             <Users size={14} /> Inner Circle
           </button>
           <button
-            onClick={() => setTab("subscribers")}
-            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
-              tab === "subscribers"
-                ? "border-foreground text-foreground"
-                : "border-transparent text-foreground/50 hover:text-foreground/80"
-            }`}
-          >
-            <Mail size={14} /> Subscribers
-          </button>
-          <button
             onClick={() => setTab("reading-room")}
             className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
               tab === "reading-room"
@@ -478,6 +468,16 @@ const Admin = () => {
             }`}
           >
             <BookOpen size={14} /> Reading Room
+          </button>
+          <button
+            onClick={() => setTab("subscribers")}
+            className={`inline-flex items-center gap-2 px-5 py-3 text-[11px] tracking-[0.18em] uppercase transition-colors border-b-2 -mb-px ${
+              tab === "subscribers"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-foreground/50 hover:text-foreground/80"
+            }`}
+          >
+            <Mail size={14} /> Email Subscribers
           </button>
         </div>
 
